@@ -1,13 +1,15 @@
-<TopAppBar appBarTitle="Scouting" muiIcon="add"/>
-<div class="tabbar">
-	{#if teamList.length > 0}
-	<TabBar tabs={teamList} let:tab bind:active>
-		<!-- Note: the `tab` property is required! -->
-		<Tab {tab}>
-			<Label>{tab}</Label>
-		</Tab>
-	</TabBar>
-	{/if}
+<TopAppBar appBarTitle="Scouting" muiIcon="add" />
+<div class="scout-body">
+	<div class="teamNumber">3314</div>
+	<div class="field-section">
+		<NumberField fieldName="High Goal"/>
+		<NumberField fieldName="Low Goal"/>
+		<NumberField fieldName="Auton High"/>
+		<NumberField fieldName="Auton Low"/>
+		<NumberField fieldName="Auton Human High"/>
+		<NumberField fieldName="Auton Human Low"/>
+		<CheckBoxField fieldName="Attempted Climb"/>
+	</div>
 </div>
 
 <script>
@@ -15,28 +17,33 @@
 	import Tab, { Label } from '@smui/tab';
 	import TabBar from '@smui/tab-bar';
 	import Button from '@smui/button';
-	export let eTeamsList;
-	let teamList = []
-	teamList = eTeamsList;
-
-	let active = '';
-	console.log(eTeamsList)
+	import NumberField from './NumberField.svelte'
+	import CheckBoxField from './CheckBoxField.svelte'
 </script>
 
 <style>
-.body {
-	height: 100em;
-}
+	.scout-body {
+		display: flex;
+		flex-direction: column;
+		padding: 1rem 2rem;
+		height: 100em;
+	}
 
-.tabbar {
-	/* background-color: var(--mdc-theme-primary); */
-}
+	.teamNumber {
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+	}
 
-.white {
-	color: white !important;
-}
+	.field-section {
+		border: 1px solid rgba(214, 0, 0, 0.2);
+		border-radius: 5px;
+	}
+
+	.tabbar {
+		/* background-color: var(--mdc-theme-primary); */
+	}
+
+	.white {
+		color: white !important;
+	}
 </style>
-
-<div class="body">
-
-</div>

@@ -5,7 +5,7 @@
 		<TeamsBody/>
 	</div>
 {:else}
-	<Scout eTeamsList={teamList}/>
+	<Scout/>
 {/if}
 <BottomAppBar/>
 

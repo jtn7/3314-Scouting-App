@@ -5,7 +5,7 @@
 				<Title>{appBarTitle}</Title>
 			</Section>
 			<Section align="end" toolbar>
-				<IconButton on:click={() => callback()} class="material-icons" aria-label="Options">{muiIcon}</IconButton>
+				<IconButton on:click={() => callback()} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
 				{#if showMore}
 				<List class="more-vert" dense>
 					<Item on:SMUI:action={() => showDialog()}>

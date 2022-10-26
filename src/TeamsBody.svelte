@@ -50,6 +50,15 @@
 		{ logo: '', number: '3314', name: 'Mechanical Mustangs' },
 		{ logo: '', number: '3314', name: 'Mechanical Mustangs' }
 	];
+
+	// Changes UI to reflect multiselection of teams for batch operations
+	// function selectTeam(evt) {
+		// Show checkmark
+		// console.log(evt.target.parentElement.parentElement.classList.add('selected'))
+		// If checkmark is already applied then unapply it
+		// Add to selection list
+		// Apply classes for selection
+	// }
 </script>
 <style>
 	.team-section {
@@ -76,7 +85,7 @@
 	}
 
 	.team:hover {
-		background-color: rgba(0, 0, 0, 0.03);
+		background-color: rgba(0, 0, 0, 0.1);
 	}
 
 	.team:first-child {
@@ -94,7 +103,7 @@
 		width: 2rem;
 		height: 2rem;
 		border-radius: 50%;
-		background-color: rgb(236, 236, 236)
+		background-color: rgb(255, 219, 219)
 	}
 
 	.team .team-number {

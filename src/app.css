@@ -121,3 +121,8 @@ footer, header, hgroup, menu, nav, section {
 		background-color: #f9f9f9;
 	}
 } */
+
+/* This is for multi select */
+.selected {
+	background-color: rgba(0, 0, 0, 0.1);
+}
