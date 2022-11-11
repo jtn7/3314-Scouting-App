@@ -5,15 +5,15 @@
 				<Title>{appBarTitle}</Title>
 			</Section>
 			<Section align="end" toolbar>
-				<IconButton on:click={() => callback()} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
-				{#if showMore}
+				<IconButton on:click={callTheCallback} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
+				<!-- {#if showMore}
 				<List class="more-vert" dense>
 					<Item on:SMUI:action={() => showDialog()}>
 						<Graphic class="material-icons">add</Graphic>
 						<Text>Add Team</Text>
 					</Item>
 				</List>
-				{/if}
+				{/if} -->
 			</Section>
 		</Row>
 	</TopAppBar>
@@ -34,6 +34,10 @@
 
 	function showDialog() {
 		console.log("dialog Shown")
+	}
+
+	function callTheCallback() {
+		callback()
 	}
 </script>
 

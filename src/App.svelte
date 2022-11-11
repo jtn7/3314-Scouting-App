@@ -1,6 +1,6 @@
 
 {#if teams}
-	<TopAppBar callback={addTeam} appBarTitle="Teams" muiIcon="add"/>
+	<TopAppBar callback={addTeam} appBarTitle="Teams" muiIcon="more_vert"/>
 	<div class="body">
 		<TeamsBody/>
 	</div>
