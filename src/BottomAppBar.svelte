@@ -29,7 +29,7 @@
 <style>
 	.bap {
 		background-color: var(--mdc-theme-primary);
-		position: sticky;
+		position: fixed;
 		bottom: 0;
 		width: 100%;
 		display: flex;

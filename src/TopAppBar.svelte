@@ -1,35 +1,35 @@
 <div class="top-app-bar-container">
 	<TopAppBar variant="fixed">
 		<Row>
+			{#if iconPlacement === "left"}
+			<Section toolbar>
+				<IconButton on:click={callTheCallback} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
+				<Title>{appBarTitle}</Title>
+			</Section>
+			{:else if iconPlacement === "right"}
 			<Section>
 				<Title>{appBarTitle}</Title>
 			</Section>
 			<Section align="end" toolbar>
 				<IconButton on:click={callTheCallback} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
-				<!-- {#if showMore}
-				<List class="more-vert" dense>
-					<Item on:SMUI:action={() => showDialog()}>
-						<Graphic class="material-icons">add</Graphic>
-						<Text>Add Team</Text>
-					</Item>
-				</List>
-				{/if} -->
 			</Section>
+			{/if}
 		</Row>
 	</TopAppBar>
 </div>
 
 <script>
-	import IconButton from '@smui/icon-button';
-	import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar';
-	import List, { Item, Graphic, Text } from '@smui/list';
-	export let appBarTitle;
-	export let muiIcon;
-	export let callback;
-	let showMore = false;
+	import IconButton from '@smui/icon-button'
+	import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
+	import List, { Item, Graphic, Text } from '@smui/list'
+	export let appBarTitle
+	export let muiIcon
+	export let callback
+	export let iconPlacement
+	let showMore = false
 
 	function blah() {
-		showMore = true;
+		showMore = true
 	}
 
 	function showDialog() {

@@ -1,4 +1,4 @@
-<TopAppBar appBarTitle="Scouting" muiIcon="add" callback={addTeam} />
+<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
 <div class="scout-body">
 	{open}
 	<div class="teamNumber">{valueTypeNumber}</div>
@@ -53,7 +53,6 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1rem 2rem;
-		height: 100em;
 	}
 
 	.teamNumber {

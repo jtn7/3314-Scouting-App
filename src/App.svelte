@@ -1,9 +1,6 @@
 
 {#if teams}
-	<TopAppBar callback={addTeam} appBarTitle="Teams" muiIcon="more_vert"/>
-	<div class="body">
-		<TeamsBody/>
-	</div>
+	<TeamsBody/>
 {:else}
 	<Scout/>
 {/if}

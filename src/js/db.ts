@@ -18,15 +18,15 @@ function initDB():void {
 	scoutingDBRequest.onupgradeneeded = () => {
 		scoutingDB = scoutingDBRequest.result
 		scoutingDB.createObjectStore("teams", {keyPath: "teamNumber"})
-		populateDB()
 	}
 	scoutingDBRequest.onsuccess = () => {
 		scoutingDB = scoutingDBRequest.result
 		scoutingSuccess = true
-		dbExists().then(success => {
+		dataExists().then(success => {
 			if (success) {
-				console.log("Mustangs found")
+				console.log("Mustangs found. No need to populate")
 			} else {
+				console.log("Mustangs not found...populating now")
 				populateDB()
 			}
 		}).catch(reason => {
@@ -34,38 +34,38 @@ function initDB():void {
 		})
 		// populateDB()
 	}
-	scoutingDBRequest.onerror = () => {
+	scoutingDBRequest.onerror = (event) => {
 		scoutingSuccess = false;
-		console.log("There was an error getting the CarsDatabase")
+		console.log("There was an error getting the Scouting database", event)
 	}
 }
 
 /**
- * Sends requests to check if there's data in the database. If there is data in
- * the DB, then a callback is set for updating the database with firebase scouting
- * data and FRC data.
- * @returns resolves to true if there's existing data in the database
+ * Checks if Mechanical Mustangs is in the database. If it is, then it is safe
+ * to assume data was loaded into the database at one point.
+ * @returns resolves to true if Mechanical Mustangs is in the database
  */
-async function dbExists(): Promise<boolean> {
+async function dataExists(): Promise<boolean> {
 	const transaction = scoutingDB.transaction("teams", "readwrite")
 	const teamsStore = transaction.objectStore("teams")
-	const getMustangs = teamsStore.get(3314)
+	const getMustangs:IDBRequest<FRCTeam> = teamsStore.get(3314)
 	return new Promise((resolve, reject) => {
 		getMustangs.onerror = (event) => {
-			console.log("getMustangs onerror entered")
-			reject(`Could not get mustangs from teams: ${event}`)
+			reject(`Error while getting a team: ${event}`)
 		}
 		getMustangs.onsuccess = () => {
-			console.log("getMustangs succeeded")
-			resolve(true)
+			if (getMustangs.result?.teamNumber === 3314) {
+				resolve(true)
+			} else {
+				resolve(false)
+			}
 		}
 	})
-	
-	// const transaction:IDBTransaction = scoutingDB.transaction("teams", "readonly")
-	// const teamsStore = transaction.objectStore("teams")
-	// const getMustangsQuery = teamsStore.get(3314)
 }
 
+/**
+ * Fills the scoutingDB with the localTeams entries
+ */
 function populateDB() {
 	const transaction = scoutingDB.transaction("teams", "readwrite")
 	const teamsStore = transaction.objectStore("teams")
@@ -74,7 +74,37 @@ function populateDB() {
 	})
 }
 
-const localTeams = [
+/**
+ * This function queries the database for all teams.
+ * @returns All FRC Teams in database
+ */
+export async function getTeams():Promise<FRCTeam[]> {
+	const transaction = scoutingDB.transaction("teams", "readwrite")
+	const teamsStore = transaction.objectStore("teams")
+	const teamsQuery:IDBRequest<FRCTeam[]> = teamsStore.getAll()
+	return new Promise<FRCTeam[]>((resolve, reject) => {
+		teamsQuery.onsuccess = () => {
+			if (teamsQuery.result === undefined) {
+				reject("getTeams Query was successful but result was undefined")
+			} else {
+				resolve(teamsQuery.result)
+			}
+		}
+		teamsQuery.onerror = (event) => {
+			reject(`getTeams Query could not be completed: ${event}`)
+		}
+	})
+
+}
+
+export type FRCTeam = {
+	teamNumber: number,
+	teamName: string,
+	wins: number,
+	losses: number
+}
+
+const localTeams:FRCTeam[] = [
 	{
 		teamNumber: 3314,
 		teamName: "Mechanical Mustangs",

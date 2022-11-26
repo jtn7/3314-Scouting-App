@@ -105,6 +105,13 @@ footer, header, hgroup, menu, nav, section {
 	--mdc-theme-text-icon-on-dark: rgba(255, 255, 255, 0.5);
 }
 
+	.mdc-drawer .mdc-deprecated-list-item--activated {
+		color: black;
+	}
+
+	.mdc-drawer .mdc-deprecated-list-item--activated .mdc-deprecated-list-item__graphic {
+		color: var(--mdc-theme-primary);
+	}
 /* .mdc-tab .mdc-tab__text-label {
 	color: white;
 } */
