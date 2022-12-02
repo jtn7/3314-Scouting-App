@@ -32,7 +32,6 @@ function initDB():void {
 		}).catch(reason => {
 			console.log(reason)
 		})
-		// populateDB()
 	}
 	scoutingDBRequest.onerror = (event) => {
 		scoutingSuccess = false;
@@ -97,7 +96,7 @@ export async function getTeams():Promise<FRCTeam[]> {
 
 }
 
-export type FRCTeam = {
+type FRCTeam = {
 	teamNumber: number,
 	teamName: string,
 	wins: number,
