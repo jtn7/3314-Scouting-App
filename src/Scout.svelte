@@ -3,13 +3,22 @@
 	{open}
 	<div class="teamNumber">{valueTypeNumber}</div>
 	<div class="field-section">
-		<NumberField fieldName="High Goal" />
-		<NumberField fieldName="Low Goal" />
-		<NumberField fieldName="Auton High" />
-		<NumberField fieldName="Auton Low" />
-		<NumberField fieldName="Auton Human High" />
-		<NumberField fieldName="Auton Human Low" />
-		<CheckBoxField fieldName="Attempted Climb" />
+		<div class="inputField">
+			<div class="field-name">High Goal</div>
+			<CounterInput />
+		</div>
+		<div class="inputField">
+			<div class="field-name">Low Goal</div>
+			<CounterInput />
+		</div>
+		<div class="inputField">
+			<div class="field-name">Auto High</div>
+			<CounterInput />
+		</div>
+		<div class="inputField">
+			<div class="field-name">Auto Low</div>
+			<CounterInput />
+		</div>
 	</div>
 </div>
 <Dialog bind:open aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
@@ -33,6 +42,7 @@
 	import CheckBoxField from './CheckBoxField.svelte';
 	import Dialog, { Title, Content, Actions } from '@smui/dialog';
 	import Textfield from '@smui/textfield';
+	import CounterInput from './CounterInput.svelte'
 
 	let valueTypeNumber = 0;
 	let open = false;
@@ -61,8 +71,8 @@
 	}
 
 	.field-section {
-		border: 1px solid rgba(214, 0, 0, 0.2);
-		border-radius: 5px;
+		/* border: 1px solid rgba(214, 0, 0, 0.2); */
+		/* border-radius: 5px; */
 	}
 
 	.tabbar {
@@ -71,5 +81,28 @@
 
 	.white {
 		color: white !important;
+	}
+
+	.inputField {
+		display: flex;
+		justify-content: space-between;
+
+		border-bottom: 1px solid rgba(214, 0, 0, 0.2);
+		
+		padding: 0.5rem;
+	}
+
+	.inputField:first-child {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+
+	.inputField:last-child {
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	.inputField > .field-name {
+		padding-top: 3px;
 	}
 </style>
