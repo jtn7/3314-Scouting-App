@@ -89,7 +89,9 @@
 				<div class="team-logo"><img src="" alt="" srcset=""></div>
 				<div class="team-text">
 					<div class="team-name">{t.teamName}</div>
-					<div class="team-number">{t.teamNumber}</div>
+					<div class="bottom-stuff">
+						<div class="team-number">{t.teamNumber}</div>
+					</div>
 				</div>
 			</div>
 			{/each}
@@ -220,12 +222,24 @@
 	.team>.team-logo {
 		width: 2rem;
 		height: 2rem;
+		aspect-ratio: 1;
 		border-radius: 50%;
 		background-color: rgb(255, 219, 219)
+	}
+
+	.team-text {
+		width: 100%;
 	}
 
 	.team .team-number {
 		color: rgba(0, 0, 0, 0.5);
 		font-size: 0.7rem;
+	}
+
+	.bottom-stuff {
+		width: 100%;
+		display: flex;
+		gap: 1rem;
+		/* justify-content: space-between; */
 	}
 </style>
