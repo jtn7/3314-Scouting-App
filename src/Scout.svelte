@@ -2,6 +2,8 @@
 <div class="scout-body">
 	{open}
 	<div class="teamNumber">{valueTypeNumber}</div>
+	<div class="teamNumber">{robotInfo.driveTrain}</div>
+	<div class="teamNumber">{robotInfo.climbRange}</div>
 	<div class="field-section">
 		<div class="inputField">
 			<div class="field-name">High Goal</div>
@@ -27,25 +29,27 @@
 		<Textfield bind:value={valueTypeNumber} label="Team Number" type="number" />
 	</Content>
 	<Actions>
-		<Button action="none" default>
+		<Button on:click={popRobot} action="none" default>
 			<Label>Add</Label>
 		</Button>
 	</Actions>
 </Dialog>
 
 <script>
-	import TopAppBar from './TopAppBar.svelte';
-	import Tab, { Label } from '@smui/tab';
-	import TabBar from '@smui/tab-bar';
-	import Button from '@smui/button';
-	import NumberField from './NumberField.svelte';
-	import CheckBoxField from './CheckBoxField.svelte';
-	import Dialog, { Title, Content, Actions } from '@smui/dialog';
-	import Textfield from '@smui/textfield';
+	import TopAppBar from './TopAppBar.svelte'
+	import Tab, { Label } from '@smui/tab'
+	import TabBar from '@smui/tab-bar'
+	import Button from '@smui/button'
+	import NumberField from './NumberField.svelte'
+	import CheckBoxField from './CheckBoxField.svelte'
+	import Dialog, { Title, Content, Actions } from '@smui/dialog'
+	import Textfield from '@smui/textfield'
 	import CounterInput from './CounterInput.svelte'
+	import * as db from './js/db'
 
 	let valueTypeNumber = 0;
 	let open = false;
+	let robotInfo = {}
 
 	// Show "add team" dialog
 	function addTeam() {
@@ -55,6 +59,15 @@
 
 	function closeHandler() {
 		open = false;
+	}
+
+	function popRobot() {
+		db.getRobotInfo(valueTypeNumber).then((robot) => {
+			robotInfo = robot
+			console.log("this is the robot:", robot)
+		}).catch((reason) => {
+			console.log("error getting robotInfo:", reason)
+		})
 	}
 </script>
 

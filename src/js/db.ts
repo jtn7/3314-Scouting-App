@@ -18,6 +18,7 @@ function initDB():void {
 	scoutingDBRequest.onupgradeneeded = () => {
 		scoutingDB = scoutingDBRequest.result
 		scoutingDB.createObjectStore("teams", {keyPath: "teamNumber"})
+		scoutingDB.createObjectStore("robots", {keyPath: "teamNumber"})
 	}
 	scoutingDBRequest.onsuccess = () => {
 		scoutingDB = scoutingDBRequest.result
@@ -66,10 +67,14 @@ async function dataExists(): Promise<boolean> {
  * Fills the scoutingDB with the localTeams entries
  */
 function populateDB() {
-	const transaction = scoutingDB.transaction("teams", "readwrite")
+	const transaction = scoutingDB.transaction(["teams", "robots"], "readwrite")
 	const teamsStore = transaction.objectStore("teams")
 	localTeams.forEach(team => {
 		teamsStore.put(team)
+	})
+	const robotsStore = transaction.objectStore("robots")
+	localRobots.forEach(robot => {
+		robotsStore.put(robot)
 	})
 }
 
@@ -78,7 +83,7 @@ function populateDB() {
  * @returns All FRC Teams in database
  */
 export async function getTeams():Promise<FRCTeam[]> {
-	const transaction = scoutingDB.transaction("teams", "readwrite")
+	const transaction = scoutingDB.transaction("teams", "readonly")
 	const teamsStore = transaction.objectStore("teams")
 	const teamsQuery:IDBRequest<FRCTeam[]> = teamsStore.getAll()
 	return new Promise<FRCTeam[]>((resolve, reject) => {
@@ -93,7 +98,28 @@ export async function getTeams():Promise<FRCTeam[]> {
 			reject(`getTeams Query could not be completed: ${event}`)
 		}
 	})
+}
 
+/**
+ * Queries database for info on the team's robot
+ * @param teamNumber
+ */
+export async function getRobotInfo(teamNumber:number):Promise<FRCRobot> {
+	const transaction = scoutingDB.transaction("robots", "readonly")
+	const robotStore = transaction.objectStore("robots")
+	const robotQuery:IDBRequest<FRCRobot> = robotStore.get(teamNumber)
+	return new Promise<FRCRobot>((resolve, reject) => {
+		robotQuery.onsuccess = () => {
+			if (robotQuery.result === undefined) {
+				reject("getTeams Query was successful but result was undefined")
+			} else {
+				resolve(robotQuery.result)
+			}
+		}
+		robotQuery.onerror = (event) => {
+			reject(`getTeams Query could not be completed: ${event}`)
+		}
+	})
 }
 
 type FRCTeam = {
@@ -124,7 +150,16 @@ const localTeams:FRCTeam[] = [
 	}
 ]
 
-let robotInfo = [
+type FRCRobot = {
+	teamNumber: number,
+	teamName: string,
+	driveTrain: string,
+	climbRange: number,
+	canScoreHigh: boolean,
+	canScoreLow: boolean,
+}
+
+let localRobots = [
 	{
 		teamNumber: 3314,
 		teamName: "Mechanical Mustangs",
