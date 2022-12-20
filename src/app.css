@@ -81,7 +81,7 @@ footer, header, hgroup, menu, nav, section {
 	/* --mdc-theme-primary: #c30010; */
 	--mdc-theme-primary: #a50815;
 	--mdc-theme-secondary: #676778;
-	--mdc-theme-background: #fff;
+	--mdc-theme-background: rgb(248, 248, 248);
 	--mdc-theme-surface: #fff;
 	--mdc-theme-error: #b71c1c;
 	--mdc-theme-on-primary: #fff;
@@ -132,4 +132,8 @@ footer, header, hgroup, menu, nav, section {
 /* This is for multi select */
 .selected {
 	background-color: rgba(0, 0, 0, 0.1);
+}
+
+html {
+	background-color: var(--mdc-theme-background);
 }

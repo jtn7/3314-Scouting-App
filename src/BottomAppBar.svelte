@@ -51,7 +51,7 @@
 	}
 
 	.active-tab {
-		border-bottom: 1px solid white;
+		border-bottom: 2px solid white;
 		width: 50%;
 		z-index: 1;
 		position: absolute;

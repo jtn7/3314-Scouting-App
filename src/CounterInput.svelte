@@ -1,14 +1,11 @@
 <div class="container">
-	<div class="icon-bg" on:click={decrement}>
-		<div class="material-icons btn">remove</div>
-	</div>
+	<div use:Ripple={{ surface: true }} on:click={decrement} class="material-icons btn">remove</div>
 	<div class="count">{count}</div>
-	<div class="icon-bg" on:click={increment}>
-		<div class="material-icons btn">add</div>
-	</div>
+	<div use:Ripple={{ surface: true }} on:click={increment} class="material-icons btn">add</div>
 </div>
 
 <script>
+	import Ripple from '@smui/ripple';
 	let count = 0
 
 	function increment() {
@@ -25,27 +22,24 @@
 
 	.container {
 		display: flex;
-		gap: 1rem;
-	}
-
-	.icon-bg {
-		background-color: var(--mdc-theme-primary);
-		border-radius: 3px;
-		width: 24px;
-		height: 24px;
+		gap: 0.5em;
 	}
 
 	.btn {
 		color: white;
-		width: 24px;
-		height: 24px;
+		background-color: var(--mdc-theme-primary);
+		border-radius: 30%;
+		width: 23px;
+		height: 23px;
+		padding: 0.1em;
 	}
 
 	.count {
-		padding-top: 3px;
 		font-size: large;
+		font-weight: bold;
 		width: 21px;
 		text-align: center;
+		align-self: center;
 	}
 
 </style>
