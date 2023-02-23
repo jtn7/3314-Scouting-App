@@ -11,7 +11,7 @@
 </div>
 
 <script>
-	import { teamsTab } from './stores.js';
+	import { teamsTab } from './js/stores.js';
 	let activeTab = 'active-left'
 
 	function teamsView() {

@@ -136,31 +136,92 @@ export async function getRobotInfo(teamNumber: number): Promise<FRCRobot> {
 	})
 }
 
+type FRCEvent = {
+	eventNumber:number,
+	matches: [
+		{
+			matchNumber:number,
+			scoutedTeams: [
+				{
+					teamNumber:number,
+					allianceColor:string,
+					highScored:number,
+					highMissed:number
+				}
+			]
+		}
+	]
+}
+
+type FRCMatch = {
+	eventNumber:number,
+	matchNumber:number,
+	scoutedTeams: [
+		{
+			teamNumber:number,
+			highScored:number,
+			highAttempts:number
+		}
+	]
+}
+
+/**
+ * Retrieves a team's scoring data for the given event, match, and team
+ * @param eventNum Number that identifies the event
+ * @param matchNum Number that identifies the match in the current event
+ * @param teamNum Number that identifies the team
+ */
+export async function getMatchScoring(eventNum:number, matchNum:number, teamNum:number) {
+
+}
+
+/**
+ * Retrieves all the scouted information related to the event number.
+ * If the event has no local entry `false` is resolved to the Promise.
+ * @param eventNum Event number identifier
+ * @returns a
+ */
+export async function getEvent(eventNum:number): Promise<FRCEvent|boolean> {
+	console.log("Get event transaction")
+	const transaction = scoutingDB.transaction("scoring", "readonly")
+	const scoringStore = transaction.objectStore("scoring")
+	const eventQuery: IDBRequest<FRCEvent> = scoringStore.get(eventNum)
+	return new Promise<FRCEvent|boolean>((resolve, reject) => {
+		eventQuery.onsuccess = () => {
+			if (eventQuery.result === undefined) {
+				resolve(false)
+			} else {
+				resolve(eventQuery.result)
+			}
+		}
+		eventQuery.onerror = () => {
+			reject("Error in event query")
+		}
+	})
+}
+
 type FRCTeam = {
 	teamNumber: number,
 	teamName: string,
-	wins: number,
-	losses: number
+	ppg:number
 }
 
 const localTeams: FRCTeam[] = [
 	{
 		teamNumber: 3314,
 		teamName: "Mechanical Mustangs",
-		wins: 3,
-		losses: 3
+		ppg: 3.14
 	},
 	{
 		teamNumber: 254,
 		teamName: "Cheesy Poofs",
-		wins: 6,
-		losses: 0
+		ppg: 3.14
+
 	},
 	{
 		teamNumber: 9000,
 		teamName: "Testing Team",
-		wins: 0,
-		losses: 6
+		ppg: 3.14
 	}
 ]
 

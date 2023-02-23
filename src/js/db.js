@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 let scoutingDB;
-let scoutingSuccess = false;
+let dbReady = false;
 /**
  * This function attempts to access the IndexedDB of the browser.
  * If IndexedDB is in the browser, then an attempt to open the ScoutingDB will
@@ -16,36 +16,42 @@ let scoutingSuccess = false;
  * scoutingDB will be set to null.
  */
 function initDB() {
-    const indexedDB = window.indexedDB;
-    if (!indexedDB) {
-        console.log("IndexedDB could not be found in this browser.");
-        return;
-    }
-    const scoutingDBRequest = indexedDB.open("ScoutingDB", 1);
-    scoutingDBRequest.onupgradeneeded = () => {
-        scoutingDB = scoutingDBRequest.result;
-        scoutingDB.createObjectStore("teams", { keyPath: "teamNumber" });
-    };
-    scoutingDBRequest.onsuccess = () => {
-        scoutingDB = scoutingDBRequest.result;
-        scoutingSuccess = true;
-        dataExists().then(success => {
-            if (success) {
-                console.log("Mustangs found. No need to populate");
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const indexedDB = window.indexedDB;
+            if (!indexedDB) {
+                console.log("IndexedDB could not be found in this browser.");
+                reject("IndexedDB not in browser");
             }
-            else {
-                console.log("Mustangs not found...populating now");
-                populateDB();
-            }
-        }).catch(reason => {
-            console.log(reason);
+            const scoutingDBRequest = indexedDB.open("ScoutingDB", 1);
+            scoutingDBRequest.onupgradeneeded = () => {
+                scoutingDB = scoutingDBRequest.result;
+                scoutingDB.createObjectStore("teams", { keyPath: "teamNumber" });
+                scoutingDB.createObjectStore("robots", { keyPath: "teamNumber" });
+            };
+            scoutingDBRequest.onsuccess = () => {
+                scoutingDB = scoutingDBRequest.result;
+                dataExists().then(success => {
+                    if (success) {
+                        console.log("Mustangs found. No need to populate");
+                    }
+                    else {
+                        console.log("Mustangs not found...populating now");
+                        populateDB();
+                    }
+                    dbReady = true;
+                    resolve(true);
+                }).catch(reason => {
+                    console.log("dataExists failed:", reason);
+                    reject(`Checking for data failed: ${reason}`);
+                });
+            };
+            scoutingDBRequest.onerror = (event) => {
+                console.log("There was an error getting the Scouting database", event);
+                reject("Could not open Scouting database");
+            };
         });
-        // populateDB()
-    };
-    scoutingDBRequest.onerror = (event) => {
-        scoutingSuccess = false;
-        console.log("There was an error getting the Scouting database", event);
-    };
+    });
 }
 /**
  * Checks if Mechanical Mustangs is in the database. If it is, then it is safe
@@ -54,6 +60,7 @@ function initDB() {
  */
 function dataExists() {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("dataExists transaction");
         const transaction = scoutingDB.transaction("teams", "readwrite");
         const teamsStore = transaction.objectStore("teams");
         const getMustangs = teamsStore.get(3314);
@@ -77,10 +84,15 @@ function dataExists() {
  * Fills the scoutingDB with the localTeams entries
  */
 function populateDB() {
-    const transaction = scoutingDB.transaction("teams", "readwrite");
+    console.log("populateDB transaction");
+    const transaction = scoutingDB.transaction(["teams", "robots"], "readwrite");
     const teamsStore = transaction.objectStore("teams");
     localTeams.forEach(team => {
         teamsStore.put(team);
+    });
+    const robotsStore = transaction.objectStore("robots");
+    localRobots.forEach(robot => {
+        robotsStore.put(robot);
     });
 }
 /**
@@ -89,7 +101,13 @@ function populateDB() {
  */
 export function getTeams() {
     return __awaiter(this, void 0, void 0, function* () {
-        const transaction = scoutingDB.transaction("teams", "readwrite");
+        console.log("Get Teams transaction");
+        if (!dbReady) {
+            yield initDB().catch(reason => {
+                console.log(reason);
+            });
+        }
+        const transaction = scoutingDB.transaction("teams", "readonly");
         const teamsStore = transaction.objectStore("teams");
         const teamsQuery = teamsStore.getAll();
         return new Promise((resolve, reject) => {
@@ -102,6 +120,31 @@ export function getTeams() {
                 }
             };
             teamsQuery.onerror = (event) => {
+                reject(`getTeams Query could not be completed: ${event}`);
+            };
+        });
+    });
+}
+/**
+ * Queries database for info on the team's robot
+ * @param teamNumber
+ */
+export function getRobotInfo(teamNumber) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("Get Robot Info transaction");
+        const transaction = scoutingDB.transaction("robots", "readonly");
+        const robotStore = transaction.objectStore("robots");
+        const robotQuery = robotStore.get(teamNumber);
+        return new Promise((resolve, reject) => {
+            robotQuery.onsuccess = () => {
+                if (robotQuery.result === undefined) {
+                    reject("getTeams Query was successful but result was undefined");
+                }
+                else {
+                    resolve(robotQuery.result);
+                }
+            };
+            robotQuery.onerror = (event) => {
                 reject(`getTeams Query could not be completed: ${event}`);
             };
         });
@@ -127,7 +170,7 @@ const localTeams = [
         losses: 6
     }
 ];
-let robotInfo = [
+let localRobots = [
     {
         teamNumber: 3314,
         teamName: "Mechanical Mustangs",
@@ -156,5 +199,3 @@ let robotInfo = [
         positionStartedInAuto: false,
     }
 ];
-// This will request the CarsDatabase and eventually will set the carsDB variable
-initDB();

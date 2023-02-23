@@ -48,6 +48,7 @@
 <Scrim />
 <!-- End Side Menu -->
 
+{#if selectedTeam == null}
 <TopAppBar appBarTitle="Teams" iconPlacement="left" muiIcon="menu" callback={openMenu} />
 <div class="body">
 	<!-- Favorite Teams -->
@@ -98,9 +99,13 @@
 		</div>
 	</div>
 </div>
+{:else}
+<TeamPage close={closeTeam} teamData={selectedTeam}/>
+{/if}
 
 <script>
-	import TopAppBar from './TopAppBar.svelte';
+	import TopAppBar from './TopAppBar.svelte'
+	import TeamPage from './TeamPage.svelte'
 	import * as db from './js/db'
 	let teams = []
 
@@ -130,7 +135,9 @@
 		open = true
 	}
 
+	let selectedTeam = null
 	function openTeam(team) {
+		selectedTeam = team
 		// Check if team is already in list
 		let inRecentTeams = false
 		recentTeams.forEach(t => {
@@ -167,6 +174,9 @@
 		open = false
 	}
 
+	function closeTeam() {
+		selectedTeam = null
+	}
 	// Changes UI to reflect multiselection of teams for batch operations
 	// function selectTeam(evt) {
 		// Show checkmark

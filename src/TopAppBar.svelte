@@ -13,6 +13,10 @@
 			<Section align="end" toolbar>
 				<IconButton on:click={callTheCallback} class="material-icons" aria-label="Options" touch>{muiIcon}</IconButton>
 			</Section>
+			{:else}
+			<Section toolbar>
+				<Title>{appBarTitle}</Title>
+			</Section>
 			{/if}
 		</Row>
 	</TopAppBar>
@@ -22,10 +26,10 @@
 	import IconButton from '@smui/icon-button'
 	import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar'
 	import List, { Item, Graphic, Text } from '@smui/list'
-	export let appBarTitle
-	export let muiIcon
-	export let callback
-	export let iconPlacement
+	export let appBarTitle = ""
+	export let muiIcon = ""
+	export let callback = () => {}
+	export let iconPlacement = ""
 	let showMore = false
 
 	function blah() {

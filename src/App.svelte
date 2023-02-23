@@ -8,7 +8,7 @@
 
 
 <script>
-	import { teamsTab } from './stores.js'
+	import { teamsTab } from './js/stores.js'
 	import TopAppBar from './TopAppBar.svelte';
 	import BottomAppBar from './BottomAppBar.svelte';
 	import TeamsBody from './TeamsBody.svelte';
