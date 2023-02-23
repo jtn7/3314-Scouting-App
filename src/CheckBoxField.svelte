@@ -1,11 +1,7 @@
-<div class="field-container">
-	<div class="field-name">{fieldName}</div>
-	<Switch bind:checked touch icons={false}/>
-</div>
+<Switch bind:checked touch icons={false}/>
 
 <script>
 	import Switch from '@smui/switch'
-	export let fieldName = 'Default'
 	let checked = false;
 </script>
 

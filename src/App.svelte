@@ -8,7 +8,7 @@
 
 
 <script>
-	import { teamsTab } from './js/stores.js'
+	import { teamsTab } from './js/stores'
 	import TopAppBar from './TopAppBar.svelte';
 	import BottomAppBar from './BottomAppBar.svelte';
 	import TeamsBody from './TeamsBody.svelte';
@@ -19,11 +19,6 @@
 	teamsTab.subscribe(value => {
 		teams = value;
 	})
-
-	// Shows add team dialog
-	function addTeam() {
-		console.log(teamList)
-	}
 </script>
 
 <style>

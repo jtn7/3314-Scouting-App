@@ -21,28 +21,83 @@
 			<div class="teamNumber">{robotInfo.climbRange}</div>
 			<div class="teamNumber">{viewportWidth}</div>
 			<div class="teamNumber">{viewportHeight}</div> -->
+			<div class="section-title">Auton</div>
 			<div class="field-section">
 				<div class="inputField">
-					<div class="field-name">High Goal</div>
+					<div class="field-name">Level 1 Attempted</div>
 					<CounterInput />
 				</div>
 				<div class="inputField">
-					<div class="field-name">Low Goal</div>
+					<div class="field-name">Level 1 Scored</div>
 					<CounterInput />
 				</div>
 				<div class="inputField">
-					<div class="field-name">Auto High</div>
+					<div class="field-name">Level 2 Attempted</div>
 					<CounterInput />
 				</div>
 				<div class="inputField">
-					<div class="field-name">Auto Low</div>
+					<div class="field-name">Level 2 Scored</div>
 					<CounterInput />
 				</div>
 				<div class="inputField">
+					<div class="field-name">Level 3 Attempted</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Scored</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Docked</div>
+					<CheckBoxField />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Engaged</div>
+					<CheckBoxField />
+				</div>
+				<!-- <div class="inputField">
 					<div class="field-name">Shooting Positions</div>
 					<div on:click={openField} class="material-icons btn">gps_fixed</div>
+				</div> -->
+			</div>
+			<div class="section-title">Teleop</div>
+			<div class="field-section">
+				<div class="inputField">
+					<div class="field-name">Level 1 Attempted</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 1 Scored</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Attempted</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Scored</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Attempted</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Scored</div>
+					<CounterInput />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Docked</div>
+					<CheckBoxField />
+				</div>
+				<div class="inputField">
+					<div class="field-name">Engaged</div>
+					<CheckBoxField />
 				</div>
 			</div>
+			<Button on:click={saveMatch} variant="raised">
+				<Label>Save</Label>
+			</Button>
 		</div>
 		{:else}
 		<div class="default-msg">Add a team</div>
@@ -54,7 +109,7 @@
 		<div class="default-msg"><div>Event is not set</div></div>
 {/if}
 <Dialog bind:open aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
-	<Title id="event-title">Add Team to Scout</Title>
+	<Title id="event-title">Set Team</Title>
 	<Content id="event-content">
 		<List>
 			<Item>
@@ -94,10 +149,10 @@
 	let robotInfo = {}
 	let viewField = false
 	let matchNumber = 0
-	let active = 'None'
+	let active = '0'
 	export let eventCode = 1
 
-	let teams = ['None']
+	let teams = ['None', '0']
 
 	let viewportHeight = window.innerHeight;
 	let viewportWidth = window.innerWidth;
@@ -120,14 +175,6 @@
 			teams = [...teams, `${teamNumber} #${matchNumber}`]
 			active = teams[teams.length-1]
 		}
-
-		// db.getRobotInfo(teamNumber).then((robot) => {
-		// 	robotInfo = robot
-		// 	console.log("this is the robot:", robot)
-		// }).catch((reason) => {
-		// 	console.log("error getting robotInfo:", reason)
-		// })
-
 	}
 
 	function openField() {
@@ -137,9 +184,18 @@
 	function closeField() {
 		viewField = false
 	}
+
+	function saveMatch() {
+		console.log('save match')
+	}
 </script>
 
 <style>
+
+	.section-title {
+		font-size: 1.5rem;
+		margin-bottom: 0.5rem
+	}
 
 	.default-msg {
 		font-size: 2rem;
@@ -164,6 +220,7 @@
 		display: flex;
 		flex-direction: column;
 		padding: 1rem 5px;
+		margin-bottom: 4rem;
 	}
 
 	.teamNumber {
@@ -176,6 +233,7 @@
 		/* border-radius: 5px; */
 		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 		border-radius: 20px;
+		margin-bottom: 1rem;
 	}
 
 	.field-name {
@@ -216,4 +274,5 @@
 		/* padding-top: 3px; */
 		align-self: center;
 	}
+
 </style>

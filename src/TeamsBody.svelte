@@ -23,7 +23,7 @@
 				<Text>Add Team</Text>
 			</Item>
 			<!-- Set Event -->
-			<Item href="javascript:void(0)" on:click={()=> setEvent()}>
+			<Item href="javascript:void(0)" on:click={()=> openEventModal()}>
 				<Graphic class="material-icons" aria-hidden="true">insert_invitation</Graphic>
 				<Text>Set Event</Text>
 			</Item>
@@ -31,6 +31,11 @@
 			<Item href="javascript:void(0)" on:click={()=> sync()}>
 				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
 				<Text>Sync</Text>
+			</Item>
+			<!-- Sync -->
+			<Item href="javascript:void(0)" on:click={()=> openSigninModal()}>
+				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
+				<Text>Sign in</Text>
 			</Item>
 
 			<!-- Recently visited teams -->
@@ -47,6 +52,7 @@
 </Drawer>
 <Scrim />
 <!-- End Side Menu -->
+
 
 {#if selectedTeam == null}
 <TopAppBar appBarTitle="Teams" iconPlacement="left" muiIcon="menu" callback={openMenu} />
@@ -98,7 +104,44 @@
 			{/each}
 		</div>
 	</div>
+
 </div>
+<!-- Modal for event selection -->
+<Dialog bind:open={eventModalOpen} aria-labelledby="event-select" aria-describedby="event-select" on:SMUIDialog:closed={closeEventModal}>
+	<dTitle id="event-title">Select Event</dTitle>
+	<dContent id="event-content">
+		<Select bind:value={selectedEvent} label="Event">
+			{#each events as event}
+				<Option value={event}>{event}</Option>
+			{/each}
+		</Select>
+	</dContent>
+	<Actions>
+		<Button on:click={updateEvent} action="none" default>
+			<Label>Set Event</Label>
+		</Button>
+	</Actions>
+</Dialog>
+<!-- Modal for signin -->
+<Dialog bind:open={signInModalOpen} aria-labelledby="sign-in" aria-describedby="sign-in" on:SMUIDialog:closed={closeSigninModal}>
+	<dTitle id="event-title">Sign-in</dTitle>
+	<dContent id="event-content">
+		<List>
+			<Item>
+				<Textfield bind:value={username} label="Username" />
+			</Item>
+			<Item>
+				<Textfield bind:value={password} label="Password" type="password" />
+			</Item>
+		</List>
+	</dContent>
+	<Actions>
+		<Button on:click={signIn} action="none" default>
+			<Label>Sign in</Label>
+		</Button>
+	</Actions>
+</Dialog>
+
 {:else}
 <TeamPage close={closeTeam} teamData={selectedTeam}/>
 {/if}
@@ -106,14 +149,22 @@
 <script>
 	import TopAppBar from './TopAppBar.svelte'
 	import TeamPage from './TeamPage.svelte'
-	import * as db from './js/db'
+	// import * as db from './js/db'
+	import * as fs from './js/firestore'
+	import Dialog, { Title as dTitle, Content as dContent, Actions }from '@smui/dialog'
+	import Textfield from '@smui/textfield'
+	import Select, { Option } from '@smui/select';
+	import * as st from './js/stores'
 	let teams = []
-
-	db.getTeams().then(results => {
-		teams = results
-	}).catch(error => {
-		console.log(error)
+	st.teams.subscribe(val => {
+		teams = val
 	})
+
+	// db.getTeams().then(results => {
+	// 	teams = results
+	// }).catch(error => {
+	// 	console.log(error)
+	// })
 
 	import Drawer, {
 		AppContent,
@@ -148,13 +199,18 @@
 		if (!inRecentTeams) {
 			const MAX_RECENT_TEAMS = 5
 			if (recentTeams.length === MAX_RECENT_TEAMS) {
-				recentTeams = [team, recentTeams[0], recentTeams[1]]
+				recentTeams = [
+					team, recentTeams[0],
+					recentTeams[1], recentTeams[2],
+					recentTeams[3]
+				]
 			} else {
 				recentTeams[recentTeams.length] = team
 			}
 		}
 
 		teamNumber = team.teamNumber
+		open = false
 	}
 
 	function allTeams() {
@@ -171,12 +227,52 @@
 	}
 
 	function sync() {
-		open = false
+		fs.initFirebase()
 	}
 
 	function closeTeam() {
 		selectedTeam = null
 	}
+
+	// Signin modal
+	let username = ''
+	let password = ''
+	let signInModalOpen = false
+	// Open signin modal
+	function openSigninModal() {
+		open = false
+		signInModalOpen = true
+		console.log("open signin modal")
+	}
+	function signIn() {
+		// fs.signIn(username, password)
+		console.log("signin")
+	}
+	function closeSigninModal() {
+		signInModalOpen = false
+	}
+
+	// Event Modal
+	let selectedEvent = ''
+	let eventModalOpen = false
+	function openEventModal() {
+		open = false
+		eventModalOpen = true
+		console.log("open event modal")
+	}
+	function updateEvent() {
+		console.log(selectedEvent)
+		st.currentEvent.set(selectedEvent)
+	}
+	function closeEventModal() {
+		eventModalOpen = false
+	}
+
+	let events = []
+	st.events.subscribe(val => {
+		events = val
+	})
+
 	// Changes UI to reflect multiselection of teams for batch operations
 	// function selectTeam(evt) {
 		// Show checkmark
@@ -188,7 +284,7 @@
 </script>
 <style>
 	.body {
-		padding: 0.7rem 0.0rem;
+		padding: 0.7rem 0.0rem 4rem;
 	}
 
 	.team-section {
@@ -241,9 +337,13 @@
 		width: 100%;
 	}
 
+	.team .team-name {
+		font-size: 1rem;
+	}
+
 	.team .team-number {
 		color: rgba(0, 0, 0, 0.5);
-		font-size: 0.7rem;
+		font-size: 0.8rem;
 	}
 
 	.bottom-stuff {
