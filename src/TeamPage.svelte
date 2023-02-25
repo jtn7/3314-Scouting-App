@@ -6,28 +6,66 @@
 		<div class="title">Robot Info</div>
 		<div class="robot-info">
 			<div class="info-entry">
-				<div>Drive Train</div>
+				<div>Drivetrain</div>
+				<div>Mechanum</div>
 			</div>
 			<div class="info-entry">
 				<div>Motor Type</div>
+				<div>Jags</div>
 			</div>
 			<div class="info-entry">
-				<div>Max Grid Level</div>
+				<div>Weight</div>
+				<div>123</div>
 			</div>
 			<div class="info-entry">
-				<div>Can score cones</div>
+				<div>Dimensions</div>
+				<div>123x20x321</div>
 			</div>
 			<div class="info-entry">
-				<div>Can score cubes</div>
+				<div>Autonomous Description</div>
+				<div>
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit cupiditate, nostrum perspiciatis error similique vitae in natus nam rerum earum deleniti ea libero eaque ipsam minus sequi, voluptas molestias doloribus!
+				</div>
 			</div>
 			<div class="info-entry">
-				<div>Can balance</div>
+				<div>Can pick up from floor</div>
+				<div>Yes</div>
 			</div>
 			<div class="info-entry">
-				<div>Can player station</div>
+				<div>Can pick up from shelf</div>
+				<div>No</div>
 			</div>
 			<div class="info-entry">
-				<div>Plays Defense</div>
+				<div>Can score cones on level(s)</div>
+				<div>1, 2, 3</div>
+			</div>
+			<div class="info-entry">
+				<div>Can score cubes on level(s)</div>
+				<div>1, 2, 3</div>
+			</div>
+			<div class="info-entry">
+				<div>Can dock in auto</div>
+				<div>No</div>
+			</div>
+			<div class="info-entry">
+				<div>Can engage in auto</div>
+				<div>No</div>
+			</div>
+			<div class="info-entry">
+				<div>Mobility in auto</div>
+				<div>Yes</div>
+			</div>
+			<div class="info-entry">
+				<div>Can dock in teleop</div>
+				<div>Yes</div>
+			</div>
+			<div class="info-entry">
+				<div>Can engage in teleop</div>
+				<div>Yes</div>
+			</div>
+			<div class="info-entry">
+				<div>Defense bot</div>
+				<div>No</div>
 			</div>
 		</div>
 	</div>
@@ -40,6 +78,18 @@
 			</div>
 			<div class="info-entry">
 				<div>Avg Auton</div>
+			</div>
+		</div>
+	</div>
+	<div class="info-section">
+		<div class="title">Match History</div>
+		<div class="robot-info">
+			<div class="info-entry">
+				<div>Match 1</div>
+				<div>3314, 555, 1676</div>
+			</div>
+			<div class="info-entry">
+				<div>Match 2</div>
 			</div>
 		</div>
 	</div>
@@ -63,6 +113,9 @@
 	.robot-section {
 		margin-bottom: 1.2rem;
 	}
+	.info-section {
+		margin-bottom: 1.2rem;
+	}
 
 	.title {
 		font-size: 1.2rem;
@@ -79,6 +132,7 @@
 	}
 
 	.info-entry {
+		display: flex;
 		justify-content: space-between;
 		background-color: white;
 
