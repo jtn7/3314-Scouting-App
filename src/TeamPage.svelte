@@ -3,75 +3,107 @@
 <div class="body">
 
 	<div class="robot-section">
-		<div class="title">Robot Info</div>
+		<div class="section-title">Robot Info</div>
 		<div class="robot-info">
 			<div class="info-entry">
 				<div>Drivetrain</div>
-				<div>Mechanum</div>
+				<Select bind:value={drivetrain}>
+					<Option value="differential">Differential</Option>
+					<Option value="mechanum">Mechanum</Option>
+					<Option value="swerve">Swerve</Option>
+				</Select>
 			</div>
 			<div class="info-entry">
-				<div>Motor Type</div>
-				<div>Jags</div>
+				<div>Motor Controller</div>
+				<Select bind:value={motorController}>
+					<Option value="talon">Talon</Option>
+					<Option value="jaguar">Jaguar</Option>
+					<Option value="other">Other</Option>
+				</Select>
 			</div>
 			<div class="info-entry">
 				<div>Weight</div>
-				<div>123</div>
+				<Textfield bind:value={weight} label="Weight" type="number" />
 			</div>
 			<div class="info-entry">
 				<div>Dimensions</div>
-				<div>123x20x321</div>
-			</div>
-			<div class="info-entry">
-				<div>Autonomous Description</div>
-				<div>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit cupiditate, nostrum perspiciatis error similique vitae in natus nam rerum earum deleniti ea libero eaque ipsam minus sequi, voluptas molestias doloribus!
+				<div class="dimensions">
+					<Textfield bind:value={robotLength} label="L" type="number"/>
+					<Textfield bind:value={robotWidth} label="W" type="number"/>
+					<Textfield bind:value={robotHeight} label="H" type="number"/>
 				</div>
 			</div>
 			<div class="info-entry">
 				<div>Can pick up from floor</div>
-				<div>Yes</div>
+				<Switch bind:checked={pickupFloor} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Can pick up from shelf</div>
-				<div>No</div>
+				<Switch bind:checked={pickupShelf} icons={false} />
 			</div>
-			<div class="info-entry">
-				<div>Can score cones on level(s)</div>
-				<div>1, 2, 3</div>
+			<div class="info-entry three-bool">
+				<div class="title">Can score cones on level(s)</div>
+				<div class="lvl-scoring">
+					<div class="switch-box">
+						<div>Level 1</div>
+						<Switch bind:checked={coneLvl1} icons={false} />
+					</div>
+					<div class="switch-box">
+						<div>Level 2</div>
+						<Switch bind:checked={coneLvl2} icons={false} />
+					</div>
+					<div class="switch-box">
+						<div>Level 3</div>
+						<Switch bind:checked={coneLvl3} icons={false} />
+					</div>
+				</div>
 			</div>
-			<div class="info-entry">
-				<div>Can score cubes on level(s)</div>
-				<div>1, 2, 3</div>
+			<div class="info-entry three-bool">
+				<div class="title">Can score cubes on level(s)</div>
+				<div class="lvl-scoring">
+					<div class="switch-box">
+						<div>Level 1</div>
+						<Switch bind:checked={cubeLvl1} icons={false} />
+					</div>
+					<div class="switch-box">
+						<div>Level 2</div>
+						<Switch bind:checked={cubeLvl2} icons={false} />
+					</div>
+					<div class="switch-box">
+						<div>Level 3</div>
+						<Switch bind:checked={cubeLvl3} icons={false} />
+					</div>
+				</div>
 			</div>
 			<div class="info-entry">
 				<div>Can dock in auto</div>
-				<div>No</div>
+				<Switch bind:checked={autoDock} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Can engage in auto</div>
-				<div>No</div>
+				<Switch bind:checked={autoEngage} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Mobility in auto</div>
-				<div>Yes</div>
+				<Switch bind:checked={autoMobility} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Can dock in teleop</div>
-				<div>Yes</div>
+				<Switch bind:checked={teleopDock} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Can engage in teleop</div>
-				<div>Yes</div>
+				<Switch bind:checked={teleopEngage} icons={false} />
 			</div>
 			<div class="info-entry">
 				<div>Defense bot</div>
-				<div>No</div>
+				<Switch bind:checked={playsDefense} icons={false} />
 			</div>
 		</div>
 	</div>
 
 	<div class="info-section">
-		<div class="title">Performance Info</div>
+		<div class="section-title">Performance Info</div>
 		<div class="robot-info">
 			<div class="info-entry">
 				<div>Avg Score</div>
@@ -82,7 +114,7 @@
 		</div>
 	</div>
 	<div class="info-section">
-		<div class="title">Match History</div>
+		<div class="section-title">Match History</div>
 		<div class="robot-info">
 			<div class="info-entry">
 				<div>Match 1</div>
@@ -93,15 +125,101 @@
 			</div>
 		</div>
 	</div>
+	<Button on:click={saveRobotData} variant="raised">
+		<Label>Save</Label>
+	</Button>
 </div>
 
 <script>
 	import TopAppBar from './TopAppBar.svelte'
+	import Button, { Label } from '@smui/button'
+	import Select, { Option } from '@smui/select';
+	import Switch from '@smui/switch';
+	import Textfield from '@smui/textfield';
+	import HelperText from '@smui/textfield/helper-text';
+	import * as fs from './js/firestore'
+
+	// Input for team number and name
 	export let teamData = {}
+	// function that returns this view to the teams page
 	export let close
 
 	let teamNumber = teamData.teamNumber
 	let teamName = teamData.teamName
+
+	let drivetrain = '';
+	let motorController = ''
+	let weight = 0
+	let robotLength = ''
+	let robotWidth = ''
+	let robotHeight = ''
+	let pickupFloor = false
+	let pickupShelf = false
+
+	let coneLvl1 = false
+	let coneLvl2 = false
+	let coneLvl3 = false
+
+	let cubeLvl1 = false
+	let cubeLvl2 = false
+	let cubeLvl3 = false
+
+	let autoDock = false
+	let autoEngage = false
+	let autoMobility = false
+
+	let teleopDock = false
+	let teleopEngage = false
+
+	let playsDefense = false
+
+	getRobotData()
+	function getRobotData() {
+		fs.getRobotData(teamNumber).then(robotData => {
+			drivetrain = robotData.drivetrain
+			motorController = robotData.motorController
+			weight = robotData.weight
+			dimensions = robotData.dimensions
+			pickupFloor = robotData.pickupFloor
+			pickupShelf = robotData.pickupShelf
+			coneLvl1 = robotData.coneLvl1
+			coneLvl2 = robotData.coneLvl2
+			coneLvl3 = robotData.coneLvl3
+			cubeLvl1 = robotData.cubeLvl1
+			cubeLvl2 = robotData.cubeLvl2
+			cubeLvl3 = robotData.cubeLvl3
+			autoDock = robotData.autoDock
+			autoEngage = robotData.autoEngage
+			autoMobility = robotData.autoMobility
+			teleopDock = robotData.teleopDock
+			teleopEngage = robotData.teleopEngage
+			playsDefense = robotData.playsDefense
+		}).catch(err => console.log('failed to get robot data\n', err))
+	}
+
+	function saveRobotData() {
+		let robotData = {
+			drivetrain,
+			motorController,
+			weight,
+			dimensions,
+			pickupFloor,
+			pickupShelf,
+			coneLvl1,
+			coneLvl2,
+			coneLvl3,
+			cubeLvl1,
+			cubeLvl2,
+			cubeLvl3,
+			autoDock,
+			autoEngage,
+			autoMobility,
+			teleopDock,
+			teleopEngage,
+			playsDefense
+		}
+		fs.saveRobotData(teamNumber, robotData)
+	}
 </script>
 
 <style>
@@ -117,8 +235,8 @@
 		margin-bottom: 1.2rem;
 	}
 
-	.title {
-		font-size: 1.2rem;
+	.section-title {
+		font-size: 1.3rem;
 		margin-left: 0.5rem;
 		margin-bottom: 0.3em;
 	}
@@ -134,6 +252,7 @@
 	.info-entry {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		background-color: white;
 
 		/* border: 1px solid rgba(214, 0, 0, 0.2); */
@@ -151,5 +270,37 @@
 		border-bottom: 0;
 		border-bottom-left-radius: 20px;
 		border-bottom-right-radius: 20px;
+	}
+
+	.info-entry .vert-center {
+		vertical-align: middle;
+	}
+
+	.info-entry .dimensions {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.select-box {
+		width: 9rem;
+	}
+
+	.three-bool {
+		display: block;
+	}
+
+	.three-bool > .title {
+		font-size: 1rem;
+		margin-bottom: 1rem;
+		text-align: center;
+	}
+
+	.three-bool > .lvl-scoring {
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.three-bool > .lvl-scoring > .switch-box {
+
 	}
 </style>

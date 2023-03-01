@@ -137,3 +137,22 @@ footer, header, hgroup, menu, nav, section {
 html {
 	background-color: var(--mdc-theme-background);
 }
+
+.robot-info .mdc-select {
+	width: 8rem;
+}
+
+.info-entry > .mdc-text-field {
+	width: 5rem;
+	text-align: center;
+}
+
+.info-entry > .dimensions > .mdc-text-field {
+	width: 2rem;
+	text-align: center;
+}
+
+.info-entry > .dimensions > .mdc-text-field:last-child {
+	width: 2rem;
+	text-align: center;
+}
