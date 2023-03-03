@@ -8,7 +8,7 @@
 			<div class="info-entry">
 				<div>Drivetrain</div>
 				<Select bind:value={drivetrain}>
-					<Option value="differential">Differential</Option>
+					<Option value="tank">Tank</Option>
 					<Option value="mechanum">Mechanum</Option>
 					<Option value="swerve">Swerve</Option>
 				</Select>
