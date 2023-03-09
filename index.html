@@ -4,6 +4,8 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="theme-color" content="#750c0f">
+	<link rel="manifest" href="manifest.json">
 	<link rel="stylesheet" href="node_modules/svelte-material-ui/bare.css" />
 	<!-- <script defer type="module" src="/src/js/firebase.js"></script> -->
 	<script defer type="module" src="/src/js/db.js"></script>
@@ -14,5 +16,13 @@
 	<div id="app"></div>
 	<script type="module" src="/src/main.js"></script>
 </body>
+
+<script>
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js').then(() => {
+			console.log('Service worker registered')
+		})
+	}
+</script>
 
 </html>

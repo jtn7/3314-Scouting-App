@@ -5,21 +5,31 @@
 	<div class="robot-section">
 		<div class="section-title">Robot Info</div>
 		<div class="robot-info">
-			<div class="info-entry">
-				<div>Drivetrain</div>
-				<Select bind:value={drivetrain}>
-					<Option value="tank">Tank</Option>
-					<Option value="mechanum">Mechanum</Option>
-					<Option value="swerve">Swerve</Option>
-				</Select>
+			<div class="info-entry two-row">
+				<div class="title">Drivetrain</div>
+				<div class="center">
+					<Select bind:value={drivetrain}>
+						<Option value="mechanum">Mechanum</Option>
+						<Option value="swerve">Swerve</Option>
+						<Option value="kitbot">6-Wheel Tank (Kit Bot)</Option>
+						<Option value="6wheel">6-Wheel Tank</Option>
+						<Option value="8wheel">8-Wheel Tank</Option>
+						<Option value="westcoast">4 Traction 2 Omni (West Coast)</Option>
+					</Select>
+				</div>
 			</div>
-			<div class="info-entry">
-				<div>Motor Controller</div>
-				<Select bind:value={motorController}>
-					<Option value="talon">Talon</Option>
-					<Option value="jaguar">Jaguar</Option>
-					<Option value="other">Other</Option>
-				</Select>
+			<div class="info-entry two-row">
+				<div class="title">Drivetrain Motors</div>
+				<div class="center">
+					<Select bind:value={motors}>
+						<Option value="falcon">Falcon</Option>
+						<Option value="neo">Neo</Option>
+						<Option value="falconNeo">Falcon & Neo (Swerve)</Option>
+						<Option value="cim">CIM (Kit Bot)</Option>
+						<Option value="775">775 Pro</Option>
+						<Option value="other">Other</Option>
+					</Select>
+				</div>
 			</div>
 			<div class="info-entry">
 				<div>Weight</div>
@@ -34,14 +44,22 @@
 				</div>
 			</div>
 			<div class="info-entry">
-				<div>Can pick up from floor</div>
-				<Switch bind:checked={pickupFloor} icons={false} />
+				<div>Pick up cone from floor</div>
+				<Switch bind:checked={pickupFloorCone} icons={false} />
 			</div>
 			<div class="info-entry">
-				<div>Can pick up from shelf</div>
-				<Switch bind:checked={pickupShelf} icons={false} />
+				<div>Pick up cube from floor</div>
+				<Switch bind:checked={pickupFloorCube} icons={false} />
 			</div>
-			<div class="info-entry three-bool">
+			<div class="info-entry">
+				<div>Grab cone from shelf</div>
+				<Switch bind:checked={pickupShelfCone} icons={false} />
+			</div>
+			<div class="info-entry">
+				<div>Grab cube from shelf</div>
+				<Switch bind:checked={pickupShelfCube} icons={false} />
+			</div>
+			<div class="info-entry two-row">
 				<div class="title">Can score cones on level(s)</div>
 				<div class="lvl-scoring">
 					<div class="switch-box">
@@ -58,7 +76,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="info-entry three-bool">
+			<div class="info-entry two-row">
 				<div class="title">Can score cubes on level(s)</div>
 				<div class="lvl-scoring">
 					<div class="switch-box">
@@ -99,10 +117,13 @@
 				<div>Defense bot</div>
 				<Switch bind:checked={playsDefense} icons={false} />
 			</div>
+			<div class="info-entry">
+				<div>What is their primary strategy</div>
+			</div>
 		</div>
 	</div>
 
-	<div class="info-section">
+	<!-- <div class="info-section">
 		<div class="section-title">Performance Info</div>
 		<div class="robot-info">
 			<div class="info-entry">
@@ -112,8 +133,8 @@
 				<div>Avg Auton</div>
 			</div>
 		</div>
-	</div>
-	<div class="info-section">
+	</div> -->
+	<!-- <div class="info-section">
 		<div class="section-title">Match History</div>
 		<div class="robot-info">
 			<div class="info-entry">
@@ -124,7 +145,7 @@
 				<div>Match 2</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<Button on:click={saveRobotData} variant="raised">
 		<Label>Save</Label>
 	</Button>
@@ -147,14 +168,17 @@
 	let teamNumber = teamData.teamNumber
 	let teamName = teamData.teamName
 
-	let drivetrain = '';
-	let motorController = ''
+	let drivetrain = ''
+	let motors = ''
 	let weight = 0
+	let dimensions = ''
 	let robotLength = ''
 	let robotWidth = ''
 	let robotHeight = ''
-	let pickupFloor = false
-	let pickupShelf = false
+	let pickupFloorCone = false
+	let pickupFloorCube = false
+	let pickupShelfCone = false
+	let pickupShelfCube = false
 
 	let coneLvl1 = false
 	let coneLvl2 = false
@@ -177,11 +201,13 @@
 	function getRobotData() {
 		fs.getRobotData(teamNumber).then(robotData => {
 			drivetrain = robotData.drivetrain
-			motorController = robotData.motorController
+			motors = robotData.motors
 			weight = robotData.weight
 			dimensions = robotData.dimensions
-			pickupFloor = robotData.pickupFloor
-			pickupShelf = robotData.pickupShelf
+			pickupFloorCone = robotData.pickupFloorCone
+			pickupFloorCube = robotData.pickupFloorCube
+			pickupShelfCone = robotData.pickupShelfCone
+			pickupShelfCube = robotData.pickupShelfCube
 			coneLvl1 = robotData.coneLvl1
 			coneLvl2 = robotData.coneLvl2
 			coneLvl3 = robotData.coneLvl3
@@ -198,13 +224,16 @@
 	}
 
 	function saveRobotData() {
+		dimensions = `${robotLength}x${robotWidth}x${robotHeight}`
 		let robotData = {
 			drivetrain,
-			motorController,
+			motors,
 			weight,
 			dimensions,
-			pickupFloor,
-			pickupShelf,
+			pickupFloorCone,
+			pickupFloorCube,
+			pickupShelfCone,
+			pickupShelfCube,
 			coneLvl1,
 			coneLvl2,
 			coneLvl3,
@@ -218,6 +247,7 @@
 			teleopEngage,
 			playsDefense
 		}
+		console.log(robotData)
 		fs.saveRobotData(teamNumber, robotData)
 	}
 </script>
@@ -285,22 +315,24 @@
 		width: 9rem;
 	}
 
-	.three-bool {
+	.two-row {
 		display: block;
 	}
 
-	.three-bool > .title {
+	.two-row > .title {
 		font-size: 1rem;
 		margin-bottom: 1rem;
 		text-align: center;
 	}
 
-	.three-bool > .lvl-scoring {
+	.two-row > .lvl-scoring {
 		display: flex;
 		justify-content: space-around;
 	}
 
-	.three-bool > .lvl-scoring > .switch-box {
-
+	.two-row > .center {
+		display: flex;
+		justify-content: space-around;
 	}
+
 </style>

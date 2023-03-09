@@ -28,10 +28,10 @@
 				<Text>Set Event</Text>
 			</Item>
 			<!-- Sync -->
-			<Item href="javascript:void(0)" on:click={()=> sync()}>
+			<!-- <Item href="javascript:void(0)" on:click={()=> sync()}>
 				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
 				<Text>Sync</Text>
-			</Item>
+			</Item> -->
 			<!-- Sync -->
 			<Item href="javascript:void(0)" on:click={()=> openSigninModal()}>
 				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
@@ -58,7 +58,7 @@
 <TopAppBar appBarTitle="Teams" iconPlacement="left" muiIcon="menu" callback={openMenu} />
 <div class="body">
 	<!-- Favorite Teams -->
-	{#if favTeams.length > 0}
+	<!-- {#if favTeams.length > 0}
 	<div class="team-section">
 		<div class="title">Favorites</div>
 		<div class="teams">
@@ -73,7 +73,7 @@
 			{/each}
 		</div>
 	</div>
-	{/if}
+	{/if} -->
 	<!-- <div class="team-section">
 		<div class="title">Event</div>
 		<div class="teams">
@@ -104,18 +104,21 @@
 			{/each}
 		</div>
 	</div>
+	{#if initText != ''}
+	<div class="default-msg">{initText}</div>
+	{/if}
 
 </div>
 <!-- Modal for event selection -->
 <Dialog bind:open={eventModalOpen} aria-labelledby="event-select" aria-describedby="event-select" on:SMUIDialog:closed={closeEventModal}>
-	<dTitle id="event-title">Select Event</dTitle>
-	<dContent id="event-content">
+	<DTitle id="event-title">Select Event</DTitle>
+	<DContent id="event-content">
 		<Select bind:value={selectedEvent} label="Event">
 			{#each events as event}
 				<Option value={event}>{event}</Option>
 			{/each}
 		</Select>
-	</dContent>
+	</DContent>
 	<Actions>
 		<Button on:click={updateEvent} action="none" default>
 			<Label>Set Event</Label>
@@ -124,17 +127,14 @@
 </Dialog>
 <!-- Modal for signin -->
 <Dialog bind:open={signInModalOpen} aria-labelledby="sign-in" aria-describedby="sign-in" on:SMUIDialog:closed={closeSigninModal}>
-	<dTitle id="event-title">Sign-in</dTitle>
-	<dContent id="event-content">
+	<DTitle id="event-title">Sign-in</DTitle>
+	<DContent id="event-content">
 		<List>
 			<Item>
-				<Textfield bind:value={username} label="Username" />
-			</Item>
-			<Item>
-				<Textfield bind:value={password} label="Password" type="password" />
+				<Textfield bind:value={password} label="Password" type="text" />
 			</Item>
 		</List>
-	</dContent>
+	</DContent>
 	<Actions>
 		<Button on:click={signIn} action="none" default>
 			<Label>Sign in</Label>
@@ -149,9 +149,9 @@
 <script>
 	import TopAppBar from './TopAppBar.svelte'
 	import TeamPage from './TeamPage.svelte'
-	// import * as db from './js/db'
+	import * as db from './js/db'
 	import * as fs from './js/firestore'
-	import Dialog, { Title as dTitle, Content as dContent, Actions }from '@smui/dialog'
+	import Dialog, { Title as DTitle, Content as DContent, Actions }from '@smui/dialog'
 	import Textfield from '@smui/textfield'
 	import Select, { Option } from '@smui/select';
 	import * as st from './js/stores'
@@ -181,6 +181,7 @@
 	let teamNumber = null
 	let recentTeams = []
 	let favTeams = []
+	let initText = 'Loading'
 
 	function openMenu() {
 		open = true
@@ -235,8 +236,15 @@
 	}
 
 	// Signin modal
-	let username = ''
-	let password = ''
+	let password = document.cookie
+	fs.initFirebase(password).then(() => initText = '').catch(
+		() => {
+			initText = 'Sign in'
+			password = ''
+			document.cookie = ''
+		}
+	)
+
 	let signInModalOpen = false
 	// Open signin modal
 	function openSigninModal() {
@@ -246,7 +254,15 @@
 	}
 	function signIn() {
 		// fs.signIn(username, password)
-		console.log("signin")
+		console.log("attempting to sign in")
+
+		// Init firebase connection / load teams
+		fs.initFirebase(password).then(() => {
+			initText = ''
+			document.cookie = password
+		}).catch(() => {
+			initText = 'Sign in'
+		})
 	}
 	function closeSigninModal() {
 		signInModalOpen = false
@@ -289,6 +305,17 @@
 
 	.team-section {
 		margin-bottom: 0.5em;
+	}
+
+	.default-msg {
+		font-size: 2rem;
+		font-weight: bold;
+		height: 70vh;
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		flex-direction: column;
+		color: gray;
 	}
 
 	.team-section>.title {

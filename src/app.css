@@ -79,9 +79,10 @@ footer, header, hgroup, menu, nav, section {
 /* Theme colors. */
 :root {
 	/* --mdc-theme-primary: #c30010; */
-	--mdc-theme-primary: #a50815;
+	/* --mdc-theme-primary: #a50815; */
+	--mdc-theme-primary: #750c0f;
 	--mdc-theme-secondary: #676778;
-	--mdc-theme-background: rgb(248, 248, 248);
+	--mdc-theme-background: #f8f8f8;
 	--mdc-theme-surface: #fff;
 	--mdc-theme-error: #b71c1c;
 	--mdc-theme-on-primary: #fff;
@@ -105,13 +106,13 @@ footer, header, hgroup, menu, nav, section {
 	--mdc-theme-text-icon-on-dark: rgba(255, 255, 255, 0.5);
 }
 
-	.mdc-drawer .mdc-deprecated-list-item--activated {
-		color: black;
-	}
+.mdc-drawer .mdc-deprecated-list-item--activated {
+	color: black;
+}
 
-	.mdc-drawer .mdc-deprecated-list-item--activated .mdc-deprecated-list-item__graphic {
-		color: var(--mdc-theme-primary);
-	}
+.mdc-drawer .mdc-deprecated-list-item--activated .mdc-deprecated-list-item__graphic {
+	color: var(--mdc-theme-primary);
+}
 /* .mdc-tab .mdc-tab__text-label {
 	color: white;
 } */
@@ -138,10 +139,6 @@ html {
 	background-color: var(--mdc-theme-background);
 }
 
-.robot-info .mdc-select {
-	width: 8rem;
-}
-
 .info-entry > .mdc-text-field {
 	width: 5rem;
 	text-align: center;
@@ -155,4 +152,8 @@ html {
 .info-entry > .dimensions > .mdc-text-field:last-child {
 	width: 2rem;
 	text-align: center;
+}
+
+.mdc-button {
+	width: 100%;
 }

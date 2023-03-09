@@ -12,7 +12,7 @@ import * as stores from "./stores";
 
 let fdb;
 
-export function initFirebase() {
+export async function initFirebase(password) {
     const firebaseConfig = {
         apiKey: "AIzaSyBR-UKnuOQ4eXJfhVLAT_MYDYDSiLDuh-s",
         authDomain: "scouting-6e3b0.firebaseapp.com",
@@ -26,10 +26,13 @@ export function initFirebase() {
     const db = getFirestore(app);
     stores.fb.set(db);
 
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, "", "").then((userCredential) => {
-        console.log("Successfully signed in");
-    });
+    const auth = getAuth()
+    await signInWithEmailAndPassword(auth, '3314@frc.com', password).then((userCredential) => {
+        console.log("Successfully signed in")
+    }).catch(err => {
+        console.log("Could not sign in:", err)
+        return Promise.reject('Sign-in failed')
+    })
 
     getEvents(db)
         .then((val) => {
@@ -45,9 +48,12 @@ export function initFirebase() {
         })
         .catch((err) => {
             console.log("could not retrieve teams " + err);
-        });
+            return Promise.reject('Failed to get teams')
+        })
 
-    fdb = db;
+    fdb = db
+
+    return Promise.resolve('Successful initialization')
 }
 
 async function getEvents(db) {
