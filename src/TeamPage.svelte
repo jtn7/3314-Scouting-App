@@ -38,25 +38,25 @@
 			<div class="info-entry">
 				<div>Dimensions</div>
 				<div class="dimensions">
-					<Textfield bind:value={robotLength} label="L" type="number"/>
-					<Textfield bind:value={robotWidth} label="W" type="number"/>
-					<Textfield bind:value={robotHeight} label="H" type="number"/>
+					<Textfield bind:value={length} label="L" type="number"/>
+					<Textfield bind:value={width} label="W" type="number"/>
+					<Textfield bind:value={height} label="H" type="number"/>
 				</div>
 			</div>
 			<div class="info-entry">
-				<div>Pick up cone from floor</div>
+				<div>Picks up cone from floor</div>
 				<Switch bind:checked={pickupFloorCone} icons={false} />
 			</div>
 			<div class="info-entry">
-				<div>Pick up cube from floor</div>
+				<div>Picks up cube from floor</div>
 				<Switch bind:checked={pickupFloorCube} icons={false} />
 			</div>
 			<div class="info-entry">
-				<div>Grab cone from shelf</div>
+				<div>Grabs cone from shelf</div>
 				<Switch bind:checked={pickupShelfCone} icons={false} />
 			</div>
 			<div class="info-entry">
-				<div>Grab cube from shelf</div>
+				<div>Grabs cube from shelf</div>
 				<Switch bind:checked={pickupShelfCube} icons={false} />
 			</div>
 			<div class="info-entry two-row">
@@ -117,8 +117,10 @@
 				<div>Defense bot</div>
 				<Switch bind:checked={playsDefense} icons={false} />
 			</div>
-			<div class="info-entry">
-				<div>What is their primary strategy</div>
+			<div class="info-entry two-row">
+				<div class="title">What is their primary strategy</div>
+				<Textfield style="width: 100%;" textarea bind:value={primaryStrategy} label="Primary Stategy">
+				</Textfield>
 			</div>
 		</div>
 	</div>
@@ -172,9 +174,9 @@
 	let motors = ''
 	let weight = 0
 	let dimensions = ''
-	let robotLength = ''
-	let robotWidth = ''
-	let robotHeight = ''
+	let length = ''
+	let width = ''
+	let height = ''
 	let pickupFloorCone = false
 	let pickupFloorCube = false
 	let pickupShelfCone = false
@@ -196,6 +198,7 @@
 	let teleopEngage = false
 
 	let playsDefense = false
+	let primaryStrategy = ''
 
 	getRobotData()
 	function getRobotData() {
@@ -203,7 +206,9 @@
 			drivetrain = robotData.drivetrain
 			motors = robotData.motors
 			weight = robotData.weight
-			dimensions = robotData.dimensions
+			length = robotData.length
+			width = robotData.width
+			height = robotData.height
 			pickupFloorCone = robotData.pickupFloorCone
 			pickupFloorCube = robotData.pickupFloorCube
 			pickupShelfCone = robotData.pickupShelfCone
@@ -220,16 +225,18 @@
 			teleopDock = robotData.teleopDock
 			teleopEngage = robotData.teleopEngage
 			playsDefense = robotData.playsDefense
+			primaryStrategy = robotData.primaryStrategy
 		}).catch(err => console.log('failed to get robot data\n', err))
 	}
 
 	function saveRobotData() {
-		dimensions = `${robotLength}x${robotWidth}x${robotHeight}`
 		let robotData = {
 			drivetrain,
 			motors,
 			weight,
-			dimensions,
+			length,
+			width,
+			height,
 			pickupFloorCone,
 			pickupFloorCube,
 			pickupShelfCone,
@@ -245,9 +252,9 @@
 			autoMobility,
 			teleopDock,
 			teleopEngage,
-			playsDefense
+			playsDefense,
+			primaryStrategy
 		}
-		console.log(robotData)
 		fs.saveRobotData(teamNumber, robotData)
 	}
 </script>
