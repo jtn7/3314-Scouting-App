@@ -308,6 +308,7 @@
 		"MABRI":"NE District SE Mass Event"
 	}
 	let eventTeams = []
+	setEventTeams()
 	function setEventTeams() {
 		let evTeams = eventMap[thisEvent]
 		fs.getEventTeams(evTeams).then((result) => {

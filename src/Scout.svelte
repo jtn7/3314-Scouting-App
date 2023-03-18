@@ -279,6 +279,43 @@
 	function setScoutTeam() {
 		teams = [`${teamNumber} #${matchNumber}`]
 		active = `${teamNumber} #${matchNumber}`
+
+		alliance = ''
+		partner1 = ''
+		partner2 = ''
+		// Auton Scoring
+		aLvl1ConeAttempts = 0
+		aLvl1ConeScored = 0
+		aLvl1CubeAttempts = 0
+		aLvl1CubeScored = 0
+		aLvl2ConeAttempts = 0
+		aLvl2ConeScored = 0
+		aLvl2CubeAttempts = 0
+		aLvl2CubeScored = 0
+		aLvl3ConeAttempts = 0
+		aLvl3ConeScored = 0
+		aLvl3CubeAttempts = 0
+		aLvl3CubeScored = 0
+		aDocked = false
+		aEngaged = false
+		aMobility = false
+
+		// Teleop Scoring
+		tLvl1ConeAttempts = 0
+		tLvl1ConeScored = 0
+		tLvl1CubeAttempts = 0
+		tLvl1CubeScored = 0
+		tLvl2ConeAttempts = 0
+		tLvl2ConeScored = 0
+		tLvl2CubeAttempts = 0
+		tLvl2CubeScored = 0
+		tLvl3ConeAttempts = 0
+		tLvl3ConeScored = 0
+		tLvl3CubeAttempts = 0
+		tLvl3CubeScored = 0
+		tDocked = false
+		tEngaged = false
+		tParked = false
 	}
 
 	function openField() {
