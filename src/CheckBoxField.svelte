@@ -2,7 +2,7 @@
 
 <script>
 	import Switch from '@smui/switch'
-	let checked = false;
+	export let checked = false;
 </script>
 
 <style>

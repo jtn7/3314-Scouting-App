@@ -136,18 +136,17 @@
 			</div>
 		</div>
 	</div> -->
-	<!-- <div class="info-section">
+	<div class="info-section">
 		<div class="section-title">Match History</div>
 		<div class="robot-info">
+			{#each matches as match}
 			<div class="info-entry">
-				<div>Match 1</div>
-				<div>3314, 555, 1676</div>
+				<div>Match {match.matchNumber}</div>
+				<div>{match.team}</div>
 			</div>
-			<div class="info-entry">
-				<div>Match 2</div>
-			</div>
+			{/each}
 		</div>
-	</div> -->
+	</div>
 	<Button on:click={saveRobotData} variant="raised">
 		<Label>Save</Label>
 	</Button>
@@ -161,11 +160,17 @@
 	import Textfield from '@smui/textfield';
 	import HelperText from '@smui/textfield/helper-text';
 	import * as fs from './js/firestore'
+	import * as st from './js/stores'
 
 	// Input for team number and name
 	export let teamData = {}
 	// function that returns this view to the teams page
 	export let close
+
+	let eventCode = ''
+	st.currentEvent.subscribe(val => {
+		eventCode = val
+	})
 
 	let teamNumber = teamData.teamNumber
 	let teamName = teamData.teamName
@@ -256,6 +261,14 @@
 			primaryStrategy
 		}
 		fs.saveRobotData(teamNumber, robotData)
+	}
+
+	let matches = []
+	getMatches()
+	function getMatches() {
+		fs.getMatches(teamNumber, eventCode).then((result) => {
+			matches = result
+		}).catch(err => console.log("could not get matches:", err))
 	}
 </script>
 

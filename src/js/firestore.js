@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import {
     collection,
     doc,
+    setDoc,
     getDoc,
     getDocs,
     getFirestore,
@@ -62,10 +63,30 @@ async function getEvents(db) {
         console.log("could not read")
     );
     eventsSnapshot.forEach((doc) => {
-        events.push(doc.id);
+        const temp = {
+            name: doc.id,
+            code: doc.data().eventCode
+        }
+        events.push(temp);
     });
 
     return Promise.resolve(events);
+}
+
+export async function getEventTeams(eventName) {
+    const docRef = doc(fdb, "/events", eventName);
+    const eventSnapshot = await getDoc(docRef);
+    const teams = eventSnapshot.get("teams");
+    const teamList = []
+    teams.forEach(team => {
+        const temp = {
+            teamNumber: team.teamNumber.toString(),
+            teamName: team.nameShort
+        }
+        teamList.push(temp);
+    });
+
+    return Promise.resolve(teamList);
 }
 
 async function getTeams(db) {
@@ -95,7 +116,7 @@ export async function getRobotData(teamNumber) {
 
 // Uploads robotInfo to the database
 export async function saveRobotData(teamNumber, robotData) {
-    const docRef = doc(fdb, "/teams", teamNumber);
+    const docRef = doc(fdb, "/teams", teamNumber)
     updateDoc(docRef, {
         robotInfo: robotData
     }).then(() => {
@@ -104,4 +125,47 @@ export async function saveRobotData(teamNumber, robotData) {
         console.log(`failed to save robot data to ${teamNumber}\n`, err)
         return Promise.reject(false)
     })
+}
+
+export async function saveMatchData(teamNumber, matchNumber, eventCode, matchDetails) {
+    const eventMatchDoc = doc(fdb, `/teams/${teamNumber}/matches`, eventCode)
+
+    const writeData = {}
+    writeData[matchNumber] = {
+        matchDetails
+    }
+    setDoc(eventMatchDoc, writeData, {merge:true})
+    .then(() => {
+        return Promise.resolve(true)
+    }).catch(err => {
+        console.log(`failed to save match ${teamNumber} #${matchNumber}: ${err}`)
+        return Promise.reject(err)
+    })
+}
+
+export async function getMatches(teamNumber, eventCode) {
+    let matches = []
+    const matchesDoc = doc(fdb, `/teams/${teamNumber}/matches`, eventCode)
+    const matchesSnapshot =  await getDoc(matchesDoc)
+
+    Object.entries(matchesSnapshot.data()).forEach(([key, value]) => {
+        const matchDetails = value.matchDetails
+        const temp = {
+            matchNumber: key,
+            team: `${teamNumber}, ${matchDetails.teamPartner1}, ${matchDetails.teamPartner2}`,
+            matchDetails
+        }
+        matches.push(temp)
+    });
+
+    // matchesSnapshot.forEach((doc) => {
+    //     let temp = {
+    //         matchNumber: doc.id,
+    //         team: [],
+    //         matchDetails: doc.data()
+    //     };
+    //     matches.push(temp);
+    // });
+
+    return Promise.resolve(matches);
 }

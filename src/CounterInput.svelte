@@ -6,7 +6,7 @@
 
 <script>
 	import Ripple from '@smui/ripple';
-	let count = 0
+	export let count = 0
 
 	function increment() {
 		count += 1

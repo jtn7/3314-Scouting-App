@@ -1,5 +1,5 @@
 <!-- Side Menu -->
-<Drawer variant="modal" bind:open>
+<Drawer variant="modal" bind:open={sidebarOpen}>
 	<Header>
 		<Title>3314 Scouting</Title>
 		<!-- <Subtitle>Best scouting app ever made</Subtitle> -->
@@ -74,20 +74,22 @@
 		</div>
 	</div>
 	{/if} -->
-	<!-- <div class="team-section">
+	<div class="team-section">
 		<div class="title">Event</div>
 		<div class="teams">
-			{#each teams as team}
-			<div class="team">
+			{#each eventTeams as t}
+			<div class="team" on:click={()=> openTeam(t)}>
 				<div class="team-logo"><img src="" alt="" srcset=""></div>
 				<div class="team-text">
-					<div class="team-name">{team.name}</div>
-					<div class="team-number">{team.number}</div>
+					<div class="team-name">{t.teamName}</div>
+					<div class="bottom-stuff">
+						<div class="team-number">{t.teamNumber}</div>
+					</div>
 				</div>
 			</div>
 			{/each}
 		</div>
-	</div> -->
+	</div>
 	<div class="team-section">
 		<div class="title">All</div>
 		<div class="teams">
@@ -110,21 +112,27 @@
 
 </div>
 <!-- Modal for event selection -->
-<Dialog bind:open={eventModalOpen} aria-labelledby="event-select" aria-describedby="event-select" on:SMUIDialog:closed={closeEventModal}>
-	<DTitle id="event-title">Select Event</DTitle>
-	<DContent id="event-content">
-		<Select bind:value={selectedEvent} label="Event">
+<Dialog bind:open={eventModalOpen} selection on:SMUIDialog:closed={closeEventModal}>
+	<DTitle id="list-selection-title">Set Event</DTitle>
+	<DContent id="list-selection-content">
+		<List radioList>
 			{#each events as event}
-				<Option value={event}>{event}</Option>
+			<Item>
+				<Graphic>
+					<Radio bind:group={selectedEvent} value={event.code} />
+				</Graphic>
+				<Text>{event.name}</Text>
+			</Item>
 			{/each}
-		</Select>
+		</List>
 	</DContent>
 	<Actions>
-		<Button on:click={updateEvent} action="none" default>
+		<Button on:click={updateEvent}>
 			<Label>Set Event</Label>
 		</Button>
 	</Actions>
 </Dialog>
+
 <!-- Modal for signin -->
 <Dialog bind:open={signInModalOpen} aria-labelledby="sign-in" aria-describedby="sign-in" on:SMUIDialog:closed={closeSigninModal}>
 	<DTitle id="event-title">Sign-in</DTitle>
@@ -152,12 +160,21 @@
 	import * as db from './js/db'
 	import * as fs from './js/firestore'
 	import Dialog, { Title as DTitle, Content as DContent, Actions }from '@smui/dialog'
+	import Radio from '@smui/radio';
 	import Textfield from '@smui/textfield'
 	import Select, { Option } from '@smui/select';
 	import * as st from './js/stores'
 	let teams = []
 	st.teams.subscribe(val => {
 		teams = val
+	})
+	let events = []
+	st.events.subscribe(val => {
+		events = val
+	})
+	let thisEvent = ''
+	st.currentEvent.subscribe(val => {
+		thisEvent = val
 	})
 
 	// db.getTeams().then(results => {
@@ -177,14 +194,14 @@
 	import Button, { Label } from '@smui/button';
 	import List, { Item, Text, Graphic, Separator, Subheader } from '@smui/list';
 
-	let open = false
+	let sidebarOpen = false
 	let teamNumber = null
 	let recentTeams = []
 	let favTeams = []
 	let initText = 'Loading'
 
 	function openMenu() {
-		open = true
+		sidebarOpen = true
 	}
 
 	let selectedTeam = null
@@ -211,20 +228,20 @@
 		}
 
 		teamNumber = team.teamNumber
-		open = false
+		sidebarOpen = false
 	}
 
 	function allTeams() {
-		open = false
+		sidebarOpen = false
 	}
 
 	function search() {
-		open = false
+		sidebarOpen = false
 		// show search modal
 	}
 
 	function setEvent() {
-		open = false
+		sidebarOpen = false
 	}
 
 	function sync() {
@@ -248,7 +265,7 @@
 	let signInModalOpen = false
 	// Open signin modal
 	function openSigninModal() {
-		open = false
+		sidebarOpen = false
 		signInModalOpen = true
 		console.log("open signin modal")
 	}
@@ -272,22 +289,31 @@
 	let selectedEvent = ''
 	let eventModalOpen = false
 	function openEventModal() {
-		open = false
+		sidebarOpen = false
 		eventModalOpen = true
 		console.log("open event modal")
 	}
 	function updateEvent() {
 		console.log(selectedEvent)
 		st.currentEvent.set(selectedEvent)
+		setEventTeams()
 	}
 	function closeEventModal() {
 		eventModalOpen = false
 	}
 
-	let events = []
-	st.events.subscribe(val => {
-		events = val
-	})
+	const eventMap = {
+		"NJROB": "Robbinsville",
+		"PABEN":"Bensalem",
+		"MABRI":"NE District SE Mass Event"
+	}
+	let eventTeams = []
+	function setEventTeams() {
+		let evTeams = eventMap[thisEvent]
+		fs.getEventTeams(evTeams).then((result) => {
+			eventTeams = result
+		})
+	}
 
 	// Changes UI to reflect multiselection of teams for batch operations
 	// function selectTeam(evt) {

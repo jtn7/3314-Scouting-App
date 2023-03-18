@@ -1,4 +1,4 @@
-{#if eventCode !== 0}
+{#if eventCode !== '' || eventCode !== undefined}
 	{#if viewField}
 	<!-- <div in:fade="{{delay: 0, duration: 400, x: 100, y: 0, opacity: 0.5, easing: quintOut}}"
 		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
@@ -8,7 +8,7 @@
 	</div>
 	{:else}
 		<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
-		{#if active !== 'None'}
+		{#if active !== ''}
 		<TabBar tabs={teams} let:tab bind:active>
 			<Tab {tab}>
 				<Label>{tab}</Label>
@@ -21,39 +21,82 @@
 			<div class="teamNumber">{robotInfo.climbRange}</div>
 			<div class="teamNumber">{viewportWidth}</div>
 			<div class="teamNumber">{viewportHeight}</div> -->
+			<div class="section-title">Team</div>
+			<div class="field-section">
+				<div class="inputField">
+					<div class="field-name">Aliance</div>
+					<Select bind:value={alliance}>
+						<Option value="Blue">Blue</Option>
+						<Option value="Red">Red</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Aliance partner 1</div>
+					<Textfield bind:value={partner1} label="Alliance Partner 1" type="number"/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Aliance partner 2</div>
+					<Textfield bind:value={partner2} label="Alliance Partner 2" type="number"/>
+				</div>
+			</div>
+
 			<div class="section-title">Auton</div>
 			<div class="field-section">
 				<div class="inputField">
-					<div class="field-name">Level 1 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cone Attempts</div>
+					<CounterInput bind:count={aLvl1ConeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 1 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cone Scored</div>
+					<CounterInput bind:count={aLvl1ConeScored}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 2 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cube Attempts</div>
+					<CounterInput bind:count={aLvl1CubeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 2 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cube Scored</div>
+					<CounterInput bind:count={aLvl1CubeScored}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 3 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 2 Cone Attempts</div>
+					<CounterInput bind:count={aLvl2ConeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 3 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 2 Cone Scored</div>
+					<CounterInput bind:count={aLvl2ConeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Cube Attempts</div>
+					<CounterInput bind:count={aLvl2CubeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Cube Scored</div>
+					<CounterInput bind:count={aLvl2CubeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cone Attempts</div>
+					<CounterInput bind:count={aLvl3ConeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cone Scored</div>
+					<CounterInput bind:count={aLvl3ConeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cube Attempts</div>
+					<CounterInput bind:count={aLvl3CubeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cube Scored</div>
+					<CounterInput bind:count={aLvl3CubeScored}/>
 				</div>
 				<div class="inputField">
 					<div class="field-name">Docked</div>
-					<CheckBoxField />
+					<CheckBoxField bind:checked={aDocked}/>
 				</div>
 				<div class="inputField">
 					<div class="field-name">Engaged</div>
-					<CheckBoxField />
+					<CheckBoxField bind:checked={aEngaged}/>
 				</div>
 				<!-- <div class="inputField">
 					<div class="field-name">Shooting Positions</div>
@@ -63,36 +106,60 @@
 			<div class="section-title">Teleop</div>
 			<div class="field-section">
 				<div class="inputField">
-					<div class="field-name">Level 1 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cone Attempts</div>
+					<CounterInput bind:count={tLvl1ConeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 1 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cone Scored</div>
+					<CounterInput bind:count={tLvl1ConeScored}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 2 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cube Attempts</div>
+					<CounterInput bind:count={tLvl1CubeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 2 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 1 Cube Scored</div>
+					<CounterInput bind:count={tLvl1CubeScored}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 3 Attempted</div>
-					<CounterInput />
+					<div class="field-name">Level 2 Cone Attempts</div>
+					<CounterInput bind:count={tLvl2ConeAttempts}/>
 				</div>
 				<div class="inputField">
-					<div class="field-name">Level 3 Scored</div>
-					<CounterInput />
+					<div class="field-name">Level 2 Cone Scored</div>
+					<CounterInput bind:count={tLvl2ConeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Cube Attempts</div>
+					<CounterInput bind:count={tLvl2CubeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 2 Cube Scored</div>
+					<CounterInput bind:count={tLvl2CubeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cone Attempts</div>
+					<CounterInput bind:count={tLvl3ConeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cone Scored</div>
+					<CounterInput bind:count={tLvl3ConeScored}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cube Attempts</div>
+					<CounterInput bind:count={tLvl3CubeAttempts}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Level 3 Cube Scored</div>
+					<CounterInput bind:count={tLvl3CubeScored}/>
 				</div>
 				<div class="inputField">
 					<div class="field-name">Docked</div>
-					<CheckBoxField />
+					<CheckBoxField bind:checked={tDocked}/>
 				</div>
 				<div class="inputField">
 					<div class="field-name">Engaged</div>
-					<CheckBoxField />
+					<CheckBoxField bind:checked={tEngaged}/>
 				</div>
 			</div>
 			<Button on:click={saveMatch} variant="raised">
@@ -108,7 +175,7 @@
 		<TopAppBar appBarTitle="Scouting"/>
 		<div class="default-msg"><div>Event is not set</div></div>
 {/if}
-<Dialog bind:open aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
+<Dialog bind:open={openSetTeam} aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
 	<Title id="event-title">Set Team</Title>
 	<Content id="event-content">
 		<List>
@@ -121,7 +188,7 @@
 		</List>
 	</Content>
 	<Actions>
-		<Button on:click={popRobot} action="none" default>
+		<Button on:click={setScoutTeam} action="none" default>
 			<Label>Add</Label>
 		</Button>
 	</Actions>
@@ -142,39 +209,76 @@
 	import Textfield from '@smui/textfield'
 	import List, { Item } from '@smui/list'
 	import CounterInput from './CounterInput.svelte'
+	import Select, { Option } from '@smui/select';
 	import * as db from './js/db'
+	import * as st from './js/stores'
+	import * as fs from './js/firestore'
 
 	let teamNumber = 0
-	let open = false
+	let openSetTeam = false
 	let robotInfo = {}
 	let viewField = false
 	let matchNumber = 0
-	let active = '0'
-	export let eventCode = 1
+	let active = ''
+	let eventCode = ''
+	st.currentEvent.subscribe(val => {
+		eventCode = val
+	})
 
-	let teams = ['None', '0']
+	let alliance = ''
+	let partner1 = ''
+	let partner2 = ''
+	// Auton Scoring
+	let aLvl1ConeAttempts = 0
+	let aLvl1ConeScored = 0
+	let aLvl1CubeAttempts = 0
+	let aLvl1CubeScored = 0
+	let aLvl2ConeAttempts = 0
+	let aLvl2ConeScored = 0
+	let aLvl2CubeAttempts = 0
+	let aLvl2CubeScored = 0
+	let aLvl3ConeAttempts = 0
+	let aLvl3ConeScored = 0
+	let aLvl3CubeAttempts = 0
+	let aLvl3CubeScored = 0
+	let aDocked = false
+	let aEngaged = false
+	let aMobility = false
+
+	// Teleop Scoring
+	let tLvl1ConeAttempts = 0
+	let tLvl1ConeScored = 0
+	let tLvl1CubeAttempts = 0
+	let tLvl1CubeScored = 0
+	let tLvl2ConeAttempts = 0
+	let tLvl2ConeScored = 0
+	let tLvl2CubeAttempts = 0
+	let tLvl2CubeScored = 0
+	let tLvl3ConeAttempts = 0
+	let tLvl3ConeScored = 0
+	let tLvl3CubeAttempts = 0
+	let tLvl3CubeScored = 0
+	let tDocked = false
+	let tEngaged = false
+	let tParked = false
+
+	let teams = []
 
 	let viewportHeight = window.innerHeight;
 	let viewportWidth = window.innerWidth;
 
 	// Show "add team" dialog
 	function addTeam() {
-		open = true;
-		console.log("addTeam called")
+		openSetTeam = true;
 	}
 
 	function closeHandler() {
-		open = false;
+		openSetTeam = false;
 	}
 
-	function popRobot() {
-		if (teams[0] === 'None') {
-			teams = [`${teamNumber} #${matchNumber}`]
-			active = teams[teams.length-1]
-		} else {
-			teams = [...teams, `${teamNumber} #${matchNumber}`]
-			active = teams[teams.length-1]
-		}
+	function setScoutTeam() {
+		teams = [`${teamNumber} #${matchNumber}`]
+		active = `${teamNumber} #${matchNumber}`
 	}
 
 	function openField() {
@@ -186,7 +290,51 @@
 	}
 
 	function saveMatch() {
-		console.log('save match')
+		const matchData = {
+			allianceColor: alliance,
+			teamPartner1: partner1,
+			teamPartner2: partner2,
+			// Auton Scoring
+			autoLvl1ConeAttempts: aLvl1ConeAttempts,
+			autoLvl1ConeScored: aLvl1ConeScored,
+			autoLvl1CubeAttempts: aLvl1CubeAttempts,
+			autoLvl1CubeScored: aLvl1CubeScored,
+			autoLvl2ConeAttempts: aLvl2ConeAttempts,
+			autoLvl2ConeScored: aLvl2ConeScored,
+			autoLvl2CubeAttempts: aLvl2CubeAttempts,
+			autoLvl2CubeScored: aLvl2CubeScored,
+			autoLvl3ConeAttempts: aLvl3ConeAttempts,
+			autoLvl3ConeScored: aLvl3ConeScored,
+			autoLvl3CubeAttempts: aLvl3CubeAttempts,
+			autoLvl3CubeScored: aLvl3CubeScored,
+			autoDocked: aDocked,
+			autoEngaged: aEngaged,
+			autoMobility: aMobility,
+
+			// Teleop Scoring
+			teleopLvl1ConeAttempts: tLvl1ConeAttempts,
+			teleopLvl1ConeScored: tLvl1ConeScored,
+			teleopLvl1CubeAttempts: tLvl1CubeAttempts,
+			teleopLvl1CubeScored: tLvl1CubeScored,
+			teleopLvl2ConeAttempts: tLvl2ConeAttempts,
+			teleopLvl2ConeScored: tLvl2ConeScored,
+			teleopLvl2CubeAttempts: tLvl2CubeAttempts,
+			teleopLvl2CubeScored: tLvl2CubeScored,
+			teleopLvl3ConeAttempts: tLvl3ConeAttempts,
+			teleopLvl3ConeScored: tLvl3ConeScored,
+			teleopLvl3CubeAttempts: tLvl3CubeAttempts,
+			teleopLvl3CubeScored: tLvl3CubeScored,
+			teleopDocked: tDocked,
+			teleopEngaged: tEngaged,
+			teleopParked: tParked,
+		}
+		fs.saveMatchData(teamNumber, matchNumber, eventCode, matchData)
+		.then(() => {
+			console.log("match saved")
+		})
+		.catch(err => {
+			console.log("match saving failed:", err)
+		})
 	}
 </script>
 
