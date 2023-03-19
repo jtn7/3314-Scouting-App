@@ -1,10 +1,10 @@
 {#if eventCode !== '' || eventCode !== undefined}
-	{#if viewField}
+	{#if viewGrid}
 	<!-- <div in:fade="{{delay: 0, duration: 400, x: 100, y: 0, opacity: 0.5, easing: quintOut}}"
 		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
 	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
 		out:fade="{{duration: 100, easing: linear}}">
-		<PosScout close={closeField}/>
+		<Grid close={closeGrid} gridData={gridData}/>
 	</div>
 	{:else}
 		<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
@@ -26,6 +26,7 @@
 				<div class="inputField">
 					<div class="field-name">Aliance</div>
 					<Select bind:value={alliance}>
+						<Option value=""></Option>
 						<Option value="Blue">Blue</Option>
 						<Option value="Red">Red</Option>
 					</Select>
@@ -43,6 +44,50 @@
 			<div class="section-title">Auton</div>
 			<div class="field-section">
 				<div class="inputField">
+					<div class="field-name">Starting Location</div>
+					<Select bind:value={startingLoc}>
+						<Option value=""></Option>
+						<Option value="1">1</Option>
+						<Option value="2">2</Option>
+						<Option value="3">3</Option>
+						<Option value="4">4</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Started With</div>
+					<Select bind:value={startedWith}>
+						<Option value=""></Option>
+						<Option value="Cone">Cone</Option>
+						<Option value="Cube">Cube</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Pickup 1</div>
+					<Select bind:value={pickup1}>
+						<Option value=""></Option>
+						<Option value="A">A</Option>
+						<Option value="B">B</Option>
+						<Option value="C">C</Option>
+						<Option value="D">D</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Pickup 2</div>
+					<Select bind:value={pickup2}>
+						<Option value=""></Option>
+						<Option value="A">A</Option>
+						<Option value="B">B</Option>
+						<Option value="C">C</Option>
+						<Option value="D">D</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Didn't Move</div>
+					<CheckBoxField bind:checked={noMove}/>
+				</div>
+			</div>
+			<div class="field-section">
+				<div class="inputField">
 					<div class="field-name">Level 1 Cone Attempts</div>
 					<CounterInput bind:count={aLvl1ConeAttempts}/>
 				</div>
@@ -58,6 +103,8 @@
 					<div class="field-name">Level 1 Cube Scored</div>
 					<CounterInput bind:count={aLvl1CubeScored}/>
 				</div>
+			</div>
+			<div class="field-section">
 				<div class="inputField">
 					<div class="field-name">Level 2 Cone Attempts</div>
 					<CounterInput bind:count={aLvl2ConeAttempts}/>
@@ -74,6 +121,8 @@
 					<div class="field-name">Level 2 Cube Scored</div>
 					<CounterInput bind:count={aLvl2CubeScored}/>
 				</div>
+			</div>
+			<div class="field-section">
 				<div class="inputField">
 					<div class="field-name">Level 3 Cone Attempts</div>
 					<CounterInput bind:count={aLvl3ConeAttempts}/>
@@ -90,6 +139,8 @@
 					<div class="field-name">Level 3 Cube Scored</div>
 					<CounterInput bind:count={aLvl3CubeScored}/>
 				</div>
+			</div>
+			<div class="field-section">
 				<div class="inputField">
 					<div class="field-name">Docked</div>
 					<CheckBoxField bind:checked={aDocked}/>
@@ -98,10 +149,61 @@
 					<div class="field-name">Engaged</div>
 					<CheckBoxField bind:checked={aEngaged}/>
 				</div>
+				<div class="inputField">
+					<div class="field-name">Mobility</div>
+					<CheckBoxField bind:checked={aMobility}/>
+				</div>
 				<!-- <div class="inputField">
 					<div class="field-name">Shooting Positions</div>
 					<div on:click={openField} class="material-icons btn">gps_fixed</div>
 				</div> -->
+			</div>
+			<div class="section-title">During the Match</div>
+			<div class="field-section">
+				<div class="inputField">
+					<div class="field-name">Penalties</div>
+					<CheckBoxField bind:checked={tPenalties}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Lost Comms</div>
+					<CheckBoxField bind:checked={tLostComms}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Disabled</div>
+					<CheckBoxField bind:checked={tDisabled}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Lost Bumper</div>
+					<CheckBoxField bind:checked={tLostBumper}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">No Show</div>
+					<CheckBoxField bind:checked={tNoShow}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Picked up from Floor</div>
+					<CheckBoxField bind:checked={tPickedUpFloor}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Picked up from Substation</div>
+					<CheckBoxField bind:checked={tPickedUpShelf}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Staged Game Pieces</div>
+					<CheckBoxField bind:checked={tStagedPieces}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Scored from Staged</div>
+					<CheckBoxField bind:checked={tScoredStaged}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Played Defense</div>
+					<CheckBoxField bind:checked={tPlayedDefense}/>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Excellent Driving</div>
+					<CheckBoxField bind:checked={tExcellentDriving}/>
+				</div>
 			</div>
 			<div class="section-title">Teleop</div>
 			<div class="field-section">
@@ -161,9 +263,16 @@
 					<div class="field-name">Engaged</div>
 					<CheckBoxField bind:checked={tEngaged}/>
 				</div>
+				<div class="inputField">
+					<div class="field-name">Parked</div>
+					<CheckBoxField bind:checked={tParked}/>
+				</div>
 			</div>
 			<Button on:click={saveMatch} variant="raised">
 				<Label>Save</Label>
+			</Button>
+			<Button on:click={openGrid} variant="raised">
+				<Label>Grid</Label>
 			</Button>
 		</div>
 		{:else}
@@ -189,7 +298,7 @@
 	</Content>
 	<Actions>
 		<Button on:click={setScoutTeam} action="none" default>
-			<Label>Add</Label>
+			<BLabel>Set Team</BLabel>
 		</Button>
 	</Actions>
 </Dialog>
@@ -197,12 +306,12 @@
 <script>
 	import { scale, fade, blur } from 'svelte/transition';
 	import { quintOut, linear } from 'svelte/easing';
-	import PosScout from './PosScout.svelte'
+	import Grid from './Grid.svelte'
 	import TopAppBar from './TopAppBar.svelte'
 	import Tab, { Label } from '@smui/tab'
 	import IconButton from '@smui/icon-button'
 	import TabBar from '@smui/tab-bar'
-	import Button from '@smui/button'
+	import Button, { Label as BLabel } from '@smui/button'
 	import NumberField from './NumberField.svelte'
 	import CheckBoxField from './CheckBoxField.svelte'
 	import Dialog, { Title, Content, Actions } from '@smui/dialog'
@@ -214,10 +323,15 @@
 	import * as st from './js/stores'
 	import * as fs from './js/firestore'
 
+	let gridData = {
+		lvl3: [ 'c', 's', 'c', 'c', 's', 'c', 'c', 's', 'c' ],
+		lvl2: [ 'c', 's', 'c', 'c', 's', 'c', 'c', 's', 'c' ],
+		lvl1: [ 'c', 's', 's', 'c', 's', 'c', 's', 'c', 's' ]
+	}
+
 	let teamNumber = 0
 	let openSetTeam = false
 	let robotInfo = {}
-	let viewField = false
 	let matchNumber = 0
 	let active = ''
 	let eventCode = ''
@@ -229,6 +343,12 @@
 	let partner1 = ''
 	let partner2 = ''
 	// Auton Scoring
+	let startingLoc = ''
+	let startedWith = ''
+	let pickup1 = ''
+	let pickup2 = ''
+	let noMove = false
+
 	let aLvl1ConeAttempts = 0
 	let aLvl1ConeScored = 0
 	let aLvl1CubeAttempts = 0
@@ -246,6 +366,18 @@
 	let aMobility = false
 
 	// Teleop Scoring
+	let tPenalties = false
+	let tLostComms = false
+	let tDisabled = false
+	let tLostBumper = false
+	let tNoShow = false
+	let tPickedUpFloor = false
+	let tPickedUpShelf = false
+	let tStagedPieces = false
+	let tScoredStaged = false
+	let tPlayedDefense = false
+	let tExcellentDriving = false
+
 	let tLvl1ConeAttempts = 0
 	let tLvl1ConeScored = 0
 	let tLvl1CubeAttempts = 0
@@ -267,6 +399,14 @@
 	let viewportHeight = window.innerHeight;
 	let viewportWidth = window.innerWidth;
 
+	let viewGrid = false
+	function openGrid() {
+		viewGrid = true
+	}
+	function closeGrid() {
+		viewGrid = false
+	}
+
 	// Show "add team" dialog
 	function addTeam() {
 		openSetTeam = true;
@@ -284,6 +424,11 @@
 		partner1 = ''
 		partner2 = ''
 		// Auton Scoring
+		startingLoc = ''
+		startedWith = ''
+		pickup1 = ''
+		pickup2 = ''
+		noMove = false
 		aLvl1ConeAttempts = 0
 		aLvl1ConeScored = 0
 		aLvl1CubeAttempts = 0
@@ -301,6 +446,17 @@
 		aMobility = false
 
 		// Teleop Scoring
+		tPenalties = false
+		tLostComms = false
+		tDisabled = false
+		tLostBumper = false
+		tNoShow = false
+		tPickedUpFloor = false
+		tPickedUpShelf = false
+		tStagedPieces = false
+		tScoredStaged = false
+		tPlayedDefense = false
+		tExcellentDriving = false
 		tLvl1ConeAttempts = 0
 		tLvl1ConeScored = 0
 		tLvl1CubeAttempts = 0
@@ -318,13 +474,6 @@
 		tParked = false
 	}
 
-	function openField() {
-		viewField = true
-	}
-
-	function closeField() {
-		viewField = false
-	}
 
 	function saveMatch() {
 		const matchData = {
@@ -332,6 +481,11 @@
 			teamPartner1: partner1,
 			teamPartner2: partner2,
 			// Auton Scoring
+			autoStartingLoc: startingLoc,
+			autoStartedWith: startedWith,
+			autoPickup1: pickup1,
+			autoPickup2: pickup2,
+			autoNoMove: noMove,
 			autoLvl1ConeAttempts: aLvl1ConeAttempts,
 			autoLvl1ConeScored: aLvl1ConeScored,
 			autoLvl1CubeAttempts: aLvl1CubeAttempts,
@@ -349,6 +503,17 @@
 			autoMobility: aMobility,
 
 			// Teleop Scoring
+			teleopPenalties: tPenalties,
+			teleopLostComms: tLostComms,
+			teleopDisabled: tDisabled,
+			teleopLostBumper: tLostBumper,
+			teleopNoShow: tNoShow,
+			teleopPickedUpFloor: tPickedUpFloor,
+			teleopPickedUpShelf: tPickedUpShelf,
+			teleopStagedPieces: tStagedPieces,
+			teleopScoredStaged: tScoredStaged,
+			teleopPlayedDefense: tPlayedDefense,
+			teleopExcellentDriving: tExcellentDriving,
 			teleopLvl1ConeAttempts: tLvl1ConeAttempts,
 			teleopLvl1ConeScored: tLvl1ConeScored,
 			teleopLvl1CubeAttempts: tLvl1CubeAttempts,
