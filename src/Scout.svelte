@@ -4,7 +4,7 @@
 		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
 	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
 		out:fade="{{duration: 100, easing: linear}}">
-		<Grid close={closeGrid} gridData={gridData}/>
+		<Grid close={closeGrid} bind:attemptGrid={attemptGrid} bind:gridData={gridData} />
 	</div>
 	{:else}
 		<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
@@ -87,58 +87,9 @@
 				</div>
 			</div>
 			<div class="field-section">
-				<div class="inputField">
-					<div class="field-name">Level 1 Cone Attempts</div>
-					<CounterInput bind:count={aLvl1ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cone Scored</div>
-					<CounterInput bind:count={aLvl1ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cube Attempts</div>
-					<CounterInput bind:count={aLvl1CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cube Scored</div>
-					<CounterInput bind:count={aLvl1CubeScored}/>
-				</div>
-			</div>
-			<div class="field-section">
-				<div class="inputField">
-					<div class="field-name">Level 2 Cone Attempts</div>
-					<CounterInput bind:count={aLvl2ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cone Scored</div>
-					<CounterInput bind:count={aLvl2ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cube Attempts</div>
-					<CounterInput bind:count={aLvl2CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cube Scored</div>
-					<CounterInput bind:count={aLvl2CubeScored}/>
-				</div>
-			</div>
-			<div class="field-section">
-				<div class="inputField">
-					<div class="field-name">Level 3 Cone Attempts</div>
-					<CounterInput bind:count={aLvl3ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cone Scored</div>
-					<CounterInput bind:count={aLvl3ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cube Attempts</div>
-					<CounterInput bind:count={aLvl3CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cube Scored</div>
-					<CounterInput bind:count={aLvl3CubeScored}/>
-				</div>
+				<Button on:click={openGrid} variant="raised">
+					<Label>Auton Grid</Label>
+				</Button>
 			</div>
 			<div class="field-section">
 				<div class="inputField">
@@ -207,54 +158,11 @@
 			</div>
 			<div class="section-title">Teleop</div>
 			<div class="field-section">
-				<div class="inputField">
-					<div class="field-name">Level 1 Cone Attempts</div>
-					<CounterInput bind:count={tLvl1ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cone Scored</div>
-					<CounterInput bind:count={tLvl1ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cube Attempts</div>
-					<CounterInput bind:count={tLvl1CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 1 Cube Scored</div>
-					<CounterInput bind:count={tLvl1CubeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cone Attempts</div>
-					<CounterInput bind:count={tLvl2ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cone Scored</div>
-					<CounterInput bind:count={tLvl2ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cube Attempts</div>
-					<CounterInput bind:count={tLvl2CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 2 Cube Scored</div>
-					<CounterInput bind:count={tLvl2CubeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cone Attempts</div>
-					<CounterInput bind:count={tLvl3ConeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cone Scored</div>
-					<CounterInput bind:count={tLvl3ConeScored}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cube Attempts</div>
-					<CounterInput bind:count={tLvl3CubeAttempts}/>
-				</div>
-				<div class="inputField">
-					<div class="field-name">Level 3 Cube Scored</div>
-					<CounterInput bind:count={tLvl3CubeScored}/>
-				</div>
+				<Button on:click={openGrid} variant="raised">
+					<Label>Teleop Grid</Label>
+				</Button>
+			</div>
+			<div class="field-section">
 				<div class="inputField">
 					<div class="field-name">Docked</div>
 					<CheckBoxField bind:checked={tDocked}/>
@@ -270,9 +178,6 @@
 			</div>
 			<Button on:click={saveMatch} variant="raised">
 				<Label>Save</Label>
-			</Button>
-			<Button on:click={openGrid} variant="raised">
-				<Label>Grid</Label>
 			</Button>
 		</div>
 		{:else}
@@ -323,11 +228,22 @@
 	import * as st from './js/stores'
 	import * as fs from './js/firestore'
 
-	let gridData = {
-		lvl3: [ 'c', 's', 'c', 'c', 's', 'c', 'c', 's', 'c' ],
-		lvl2: [ 'c', 's', 'c', 'c', 's', 'c', 'c', 's', 'c' ],
-		lvl1: [ 'c', 's', 's', 'c', 's', 'c', 's', 'c', 's' ]
-	}
+	// const CONE = 2
+	// const CUBE = 1
+	const NONE = 0
+	let gridData = [
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+	]
+
+
+	let attemptGrid = [
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+	]
+
 
 	let teamNumber = 0
 	let openSetTeam = false
