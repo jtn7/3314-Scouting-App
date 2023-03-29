@@ -164,17 +164,35 @@
 	import Textfield from '@smui/textfield'
 	import Select, { Option } from '@smui/select';
 	import * as st from './js/stores'
+	import { onMount } from 'svelte'
 	let teams = []
-	st.teams.subscribe(val => {
-		teams = val
-	})
 	let events = []
-	st.events.subscribe(val => {
-		events = val
-	})
 	let thisEvent = ''
-	st.currentEvent.subscribe(val => {
-		thisEvent = val
+	let password = ''
+
+	onMount(async() => {
+		// stores
+		st.teams.subscribe(val => {
+			teams = val
+		})
+		st.events.subscribe(val => {
+			events = val
+		})
+		st.currentEvent.subscribe(val => {
+			thisEvent = val
+		})
+
+		// Signin modal
+		password = document.cookie
+		fs.initFirebase(password).then(() => initText = '').catch(
+			() => {
+				initText = 'Sign in'
+				password = ''
+				document.cookie = ''
+			}
+		)
+
+		setEventTeams()
 	})
 
 	// db.getTeams().then(results => {
@@ -252,22 +270,12 @@
 		selectedTeam = null
 	}
 
-	// Signin modal
-	let password = document.cookie
-	fs.initFirebase(password).then(() => initText = '').catch(
-		() => {
-			initText = 'Sign in'
-			password = ''
-			document.cookie = ''
-		}
-	)
 
 	let signInModalOpen = false
 	// Open signin modal
 	function openSigninModal() {
 		sidebarOpen = false
 		signInModalOpen = true
-		console.log("open signin modal")
 	}
 	function signIn() {
 		// fs.signIn(username, password)
@@ -291,10 +299,8 @@
 	function openEventModal() {
 		sidebarOpen = false
 		eventModalOpen = true
-		console.log("open event modal")
 	}
 	function updateEvent() {
-		console.log(selectedEvent)
 		st.currentEvent.set(selectedEvent)
 		setEventTeams()
 	}
@@ -308,7 +314,6 @@
 		"MABRI":"NE District SE Mass Event"
 	}
 	let eventTeams = []
-	setEventTeams()
 	function setEventTeams() {
 		let evTeams = eventMap[thisEvent]
 		fs.getEventTeams(evTeams).then((result) => {

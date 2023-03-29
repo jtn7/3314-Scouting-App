@@ -1,10 +1,20 @@
-{#if eventCode !== '' || eventCode !== undefined}
-	{#if viewGrid}
+{#if eventCode !== ''}
+	{#if viewTeleGrid}
 	<!-- <div in:fade="{{delay: 0, duration: 400, x: 100, y: 0, opacity: 0.5, easing: quintOut}}"
 		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
 	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
 		out:fade="{{duration: 100, easing: linear}}">
-		<Grid close={closeGrid} bind:attemptGrid={attemptGrid} bind:gridData={gridData} />
+			<Grid close={closeTeleGrid} bind:attemptGrid={teleAttemptGrid} bind:gridData={teleGrid} />
+	</div>
+	{:else if viewAutoGrid}
+	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
+		out:fade="{{duration: 100, easing: linear}}">
+			<Grid close={closeAutoGrid} bind:attemptGrid={autoAttemptGrid} bind:gridData={autoGrid} />
+	</div>
+	{:else if qrOpen}
+	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
+		out:fade="{{duration: 100, easing: linear}}">
+		<QRMatch close={closeQR} payload={qrData} />
 	</div>
 	{:else}
 		<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
@@ -87,7 +97,7 @@
 				</div>
 			</div>
 			<div class="field-section">
-				<Button on:click={openGrid} variant="raised">
+				<Button on:click={openAutoGrid} variant="raised">
 					<Label>Auton Grid</Label>
 				</Button>
 			</div>
@@ -158,7 +168,7 @@
 			</div>
 			<div class="section-title">Teleop</div>
 			<div class="field-section">
-				<Button on:click={openGrid} variant="raised">
+				<Button on:click={openTeleGrid} variant="raised">
 					<Label>Teleop Grid</Label>
 				</Button>
 			</div>
@@ -176,21 +186,21 @@
 					<CheckBoxField bind:checked={tParked}/>
 				</div>
 			</div>
-			<Button on:click={saveMatch} variant="raised">
-				<Label>Save</Label>
+			<Button on:click={openQRMatch} variant="raised">
+				<Label>QR</Label>
 			</Button>
 		</div>
 		{:else}
-		<div class="default-msg">Add a team</div>
+		<div class="default-msg">Set team & match</div>
 		{/if}
 
 	{/if}
 	{:else}
 		<TopAppBar appBarTitle="Scouting"/>
-		<div class="default-msg"><div>Event is not set</div></div>
+		<div class="default-msg"><div>Event not set</div></div>
 {/if}
 <Dialog bind:open={openSetTeam} aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
-	<Title id="event-title">Set Team</Title>
+	<Title id="event-title">Set Match</Title>
 	<Content id="event-content">
 		<List>
 			<Item>
@@ -203,7 +213,7 @@
 	</Content>
 	<Actions>
 		<Button on:click={setScoutTeam} action="none" default>
-			<BLabel>Set Team</BLabel>
+			<BLabel>Scout</BLabel>
 		</Button>
 	</Actions>
 </Dialog>
@@ -213,6 +223,7 @@
 	import { quintOut, linear } from 'svelte/easing';
 	import Grid from './Grid.svelte'
 	import TopAppBar from './TopAppBar.svelte'
+	import QRMatch from './QRMatch.svelte'
 	import Tab, { Label } from '@smui/tab'
 	import IconButton from '@smui/icon-button'
 	import TabBar from '@smui/tab-bar'
@@ -227,23 +238,39 @@
 	import * as db from './js/db'
 	import * as st from './js/stores'
 	import * as fs from './js/firestore'
+	import { onMount } from 'svelte'
+
+	onMount(async() => {
+		st.currentEvent.subscribe(val => {
+			eventCode = val
+		})
+	})
 
 	// const CONE = 2
 	// const CUBE = 1
 	const NONE = 0
-	let gridData = [
+	let teleGrid = [
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+	]
+	let teleAttemptGrid = [
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
 	]
 
 
-	let attemptGrid = [
+	let autoGrid = [
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
 		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
 	]
-
+	let autoAttemptGrid = [
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+		[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+	]
 
 	let teamNumber = 0
 	let openSetTeam = false
@@ -251,9 +278,6 @@
 	let matchNumber = 0
 	let active = ''
 	let eventCode = ''
-	st.currentEvent.subscribe(val => {
-		eventCode = val
-	})
 
 	let alliance = ''
 	let partner1 = ''
@@ -265,18 +289,6 @@
 	let pickup2 = ''
 	let noMove = false
 
-	let aLvl1ConeAttempts = 0
-	let aLvl1ConeScored = 0
-	let aLvl1CubeAttempts = 0
-	let aLvl1CubeScored = 0
-	let aLvl2ConeAttempts = 0
-	let aLvl2ConeScored = 0
-	let aLvl2CubeAttempts = 0
-	let aLvl2CubeScored = 0
-	let aLvl3ConeAttempts = 0
-	let aLvl3ConeScored = 0
-	let aLvl3CubeAttempts = 0
-	let aLvl3CubeScored = 0
 	let aDocked = false
 	let aEngaged = false
 	let aMobility = false
@@ -294,33 +306,26 @@
 	let tPlayedDefense = false
 	let tExcellentDriving = false
 
-	let tLvl1ConeAttempts = 0
-	let tLvl1ConeScored = 0
-	let tLvl1CubeAttempts = 0
-	let tLvl1CubeScored = 0
-	let tLvl2ConeAttempts = 0
-	let tLvl2ConeScored = 0
-	let tLvl2CubeAttempts = 0
-	let tLvl2CubeScored = 0
-	let tLvl3ConeAttempts = 0
-	let tLvl3ConeScored = 0
-	let tLvl3CubeAttempts = 0
-	let tLvl3CubeScored = 0
 	let tDocked = false
 	let tEngaged = false
 	let tParked = false
 
 	let teams = []
 
-	let viewportHeight = window.innerHeight;
-	let viewportWidth = window.innerWidth;
 
-	let viewGrid = false
-	function openGrid() {
-		viewGrid = true
+	let viewTeleGrid = false
+	function openTeleGrid() {
+		viewTeleGrid = true
 	}
-	function closeGrid() {
-		viewGrid = false
+	function closeTeleGrid() {
+		viewTeleGrid = false
+	}
+	let viewAutoGrid = false
+	function openAutoGrid() {
+		viewAutoGrid = true
+	}
+	function closeAutoGrid() {
+		viewAutoGrid = false
 	}
 
 	// Show "add team" dialog
@@ -345,18 +350,6 @@
 		pickup1 = ''
 		pickup2 = ''
 		noMove = false
-		aLvl1ConeAttempts = 0
-		aLvl1ConeScored = 0
-		aLvl1CubeAttempts = 0
-		aLvl1CubeScored = 0
-		aLvl2ConeAttempts = 0
-		aLvl2ConeScored = 0
-		aLvl2CubeAttempts = 0
-		aLvl2CubeScored = 0
-		aLvl3ConeAttempts = 0
-		aLvl3ConeScored = 0
-		aLvl3CubeAttempts = 0
-		aLvl3CubeScored = 0
 		aDocked = false
 		aEngaged = false
 		aMobility = false
@@ -373,21 +366,58 @@
 		tScoredStaged = false
 		tPlayedDefense = false
 		tExcellentDriving = false
-		tLvl1ConeAttempts = 0
-		tLvl1ConeScored = 0
-		tLvl1CubeAttempts = 0
-		tLvl1CubeScored = 0
-		tLvl2ConeAttempts = 0
-		tLvl2ConeScored = 0
-		tLvl2CubeAttempts = 0
-		tLvl2CubeScored = 0
-		tLvl3ConeAttempts = 0
-		tLvl3ConeScored = 0
-		tLvl3CubeAttempts = 0
-		tLvl3CubeScored = 0
 		tDocked = false
 		tEngaged = false
 		tParked = false
+	}
+
+	let qrOpen = false
+	function closeQR() {
+		qrOpen = false
+	}
+
+	let qrData = {}
+	function openQRMatch() {
+		qrOpen = true
+		const matchData = {
+			teamNumber: teamNumber,
+			matchNumber: matchNumber,
+			data: {
+				allianceColor: alliance,
+				teamPartner1: partner1,
+				teamPartner2: partner2,
+
+				// Auton Scoring
+				autoStartingLoc: startingLoc,
+				autoStartedWith: startedWith,
+				autoPickup1: pickup1,
+				autoPickup2: pickup2,
+				autoNoMove: noMove,
+				autoGrid: autoGrid,
+				autoDocked: aDocked,
+				autoEngaged: aEngaged,
+				autoMobility: aMobility,
+
+				// Teleop Scoring
+				teleopPenalties: tPenalties,
+				teleopLostComms: tLostComms,
+				teleopDisabled: tDisabled,
+				teleopLostBumper: tLostBumper,
+				teleopNoShow: tNoShow,
+				teleopPickedUpFloor: tPickedUpFloor,
+				teleopPickedUpShelf: tPickedUpShelf,
+				teleopStagedPieces: tStagedPieces,
+				teleopScoredStaged: tScoredStaged,
+				teleopPlayedDefense: tPlayedDefense,
+				teleopExcellentDriving: tExcellentDriving,
+				teleopGrid: teleGrid,
+				teleopDocked: tDocked,
+				teleopEngaged: tEngaged,
+				teleopParked: tParked,
+			}
+		}
+		qrData = matchData
+		qrOpen = true
 	}
 
 
@@ -402,18 +432,7 @@
 			autoPickup1: pickup1,
 			autoPickup2: pickup2,
 			autoNoMove: noMove,
-			autoLvl1ConeAttempts: aLvl1ConeAttempts,
-			autoLvl1ConeScored: aLvl1ConeScored,
-			autoLvl1CubeAttempts: aLvl1CubeAttempts,
-			autoLvl1CubeScored: aLvl1CubeScored,
-			autoLvl2ConeAttempts: aLvl2ConeAttempts,
-			autoLvl2ConeScored: aLvl2ConeScored,
-			autoLvl2CubeAttempts: aLvl2CubeAttempts,
-			autoLvl2CubeScored: aLvl2CubeScored,
-			autoLvl3ConeAttempts: aLvl3ConeAttempts,
-			autoLvl3ConeScored: aLvl3ConeScored,
-			autoLvl3CubeAttempts: aLvl3CubeAttempts,
-			autoLvl3CubeScored: aLvl3CubeScored,
+			autoGrid: autoGrid,
 			autoDocked: aDocked,
 			autoEngaged: aEngaged,
 			autoMobility: aMobility,
@@ -430,18 +449,7 @@
 			teleopScoredStaged: tScoredStaged,
 			teleopPlayedDefense: tPlayedDefense,
 			teleopExcellentDriving: tExcellentDriving,
-			teleopLvl1ConeAttempts: tLvl1ConeAttempts,
-			teleopLvl1ConeScored: tLvl1ConeScored,
-			teleopLvl1CubeAttempts: tLvl1CubeAttempts,
-			teleopLvl1CubeScored: tLvl1CubeScored,
-			teleopLvl2ConeAttempts: tLvl2ConeAttempts,
-			teleopLvl2ConeScored: tLvl2ConeScored,
-			teleopLvl2CubeAttempts: tLvl2CubeAttempts,
-			teleopLvl2CubeScored: tLvl2CubeScored,
-			teleopLvl3ConeAttempts: tLvl3ConeAttempts,
-			teleopLvl3ConeScored: tLvl3ConeScored,
-			teleopLvl3CubeAttempts: tLvl3CubeAttempts,
-			teleopLvl3CubeScored: tLvl3CubeScored,
+			teleGrid: teleGrid,
 			teleopDocked: tDocked,
 			teleopEngaged: tEngaged,
 			teleopParked: tParked,
