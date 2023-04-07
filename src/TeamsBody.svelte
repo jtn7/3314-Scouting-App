@@ -2,27 +2,27 @@
 <Drawer variant="modal" bind:open={sidebarOpen}>
 	<Header>
 		<Title>3314 Scouting</Title>
-		<Subtitle>version 0.3</Subtitle>
+		<Subtitle>version 0.4</Subtitle>
 	</Header>
 	<Content>
 		<List>
 			<!-- All Teams -->
-			<Item href="javascript:void(0)" on:click={()=> allTeams()}>
+			<Item href="javascript:void(0)" on:click="{()=> allTeams()}">
 				<Graphic class="material-icons" aria-hidden="true">home</Graphic>
 				<Text>All Teams</Text>
 			</Item>
 			<!-- Search -->
-			<Item href="javascript:void(0)" on:click={()=> openSearchModal()}>
+			<Item href="javascript:void(0)" on:click="{()=> openSearchModal()}">
 				<Graphic class="material-icons" aria-hidden="true">search</Graphic>
 				<Text>Search</Text>
 			</Item>
 			<!-- Set Event -->
-			<Item href="javascript:void(0)" on:click={()=> setEvent()}>
+			<Item href="javascript:void(0)" on:click="{()=> setEvent()}">
 				<Graphic class="material-icons" aria-hidden="true">add</Graphic>
 				<Text>Add Team</Text>
 			</Item>
 			<!-- Set Event -->
-			<Item href="javascript:void(0)" on:click={()=> openEventModal()}>
+			<Item href="javascript:void(0)" on:click="{()=> openEventModal()}">
 				<Graphic class="material-icons" aria-hidden="true">insert_invitation</Graphic>
 				<Text>Set Event</Text>
 			</Item>
@@ -312,7 +312,8 @@
 	const eventMap = {
 		"NJROB": "Robbinsville",
 		"PABEN":"Bensalem",
-		"MABRI":"NE District SE Mass Event"
+		"MABRI":"NE District SE Mass Event",
+		"MRCMP":"Lehigh"
 	}
 	let eventTeams = []
 	function setEventTeams() {

@@ -1,6 +1,4 @@
 	{#if viewTeleGrid}
-	<!-- <div in:fade="{{delay: 0, duration: 400, x: 100, y: 0, opacity: 0.5, easing: quintOut}}"
-		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
 	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
 		out:fade="{{duration: 100, easing: linear}}">
 			<Grid close={closeTeleGrid} bind:attemptGrid={teleAttemptGrid} bind:gridData={teleGrid} />
@@ -191,8 +189,13 @@
 					<CheckBoxField bind:checked={tParked}/>
 				</div>
 			</div>
-			<Button on:click={openQRMatch} variant="raised">
-				<Label>QR</Label>
+			<div class="qrButton">
+				<Button on:click={openQRMatch} variant="raised">
+					<Label>QR</Label>
+				</Button>
+			</div>
+			<Button on:click={saveToPi} variant="raised">
+				<Label>Save</Label>
 			</Button>
 		</div>
 		{:else}
@@ -207,7 +210,7 @@
 				<Textfield bind:value={teamNumber} label="Team Number" type="number" />
 			</Item>
 			<Item>
-				<Textfield bind:value={matchNumber} label="Match Number" type="number" />
+				<Textfield bind:value={matchNumber} label="Match Number" />
 			</Item>
 		</List>
 	</Content>
@@ -275,7 +278,7 @@
 	let teamNumber = 0
 	let openSetTeam = false
 	let robotInfo = {}
-	let matchNumber = 0
+	let matchNumber = ''
 	let active = ''
 	let eventCode = ''
 
@@ -500,6 +503,61 @@
 			console.log("match saving failed:", err)
 		})
 	}
+
+	function saveToPi() {
+		const matchData = {
+			allianceColor: alliance,
+			teamPartner1: partner1,
+			teamPartner2: partner2,
+			// Auton Scoring
+			autoStartingLoc: startingLoc,
+			autoStartedWith: startedWith,
+			autoPickup1: pickup1,
+			autoPickup2: pickup2,
+			autoNoMove: noMove,
+			autoAttemptGrid: autoAttemptGrid,
+			autoGrid: autoGrid,
+			autoDocked: aDocked,
+			autoEngaged: aEngaged,
+			autoMobility: aMobility,
+
+			// Teleop Scoring
+			teleopPenalties: tPenalties,
+			teleopLostComms: tLostComms,
+			teleopDisabled: tDisabled,
+			teleopLostBumper: tLostBumper,
+			teleopNoShow: tNoShow,
+			teleopPickedUpFloor: tPickedUpFloor,
+			teleopPickedUpShelf: tPickedUpShelf,
+			teleopStagedPieces: tStagedPieces,
+			teleopScoredStaged: tScoredStaged,
+			teleopPlayedDefense: tPlayedDefense,
+			teleopExcellentDriving: tExcellentDriving,
+			teleAttemptGrid: teleAttemptGrid,
+			teleGrid: teleGrid,
+			teleopDocked: tDocked,
+			teleopEngaged: tEngaged,
+			teleopParked: tParked,
+		}
+
+		const payload = {
+			teamNumber: teamNumber,
+			matchNumber: matchNumber,
+			eventCode: 'MRCMP',
+			matchData: JSON.stringify(matchData)
+		}
+		fetch("http://scout.pi:8080/match",{
+			method: 'POST',
+			mode: 'no-cors',
+			cache: 'no-cache',
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(payload)
+		}).then(resp => {
+			console.log(resp)
+		})
+	}
 </script>
 
 <style>
@@ -585,6 +643,10 @@
 	.inputField > .field-name {
 		/* padding-top: 3px; */
 		align-self: center;
+	}
+
+	.qrButton {
+		margin-bottom: 1rem;
 	}
 
 </style>
