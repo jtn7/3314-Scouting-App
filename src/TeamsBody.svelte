@@ -2,8 +2,7 @@
 <Drawer variant="modal" bind:open={sidebarOpen}>
 	<Header>
 		<Title>3314 Scouting</Title>
-		<!-- <Subtitle>Best scouting app ever made</Subtitle> -->
-		<Subtitle>{teamNumber}</Subtitle>
+		<Subtitle>version 0.3</Subtitle>
 	</Header>
 	<Content>
 		<List>
@@ -13,7 +12,7 @@
 				<Text>All Teams</Text>
 			</Item>
 			<!-- Search -->
-			<Item href="javascript:void(0)" on:click={()=> search()}>
+			<Item href="javascript:void(0)" on:click={()=> openSearchModal()}>
 				<Graphic class="material-icons" aria-hidden="true">search</Graphic>
 				<Text>Search</Text>
 			</Item>
@@ -169,6 +168,7 @@
 	let events = []
 	let thisEvent = ''
 	let password = ''
+	let searchOpen = false
 
 	onMount(async() => {
 		// stores
@@ -253,9 +253,10 @@
 		sidebarOpen = false
 	}
 
-	function search() {
+	function openSearchModal() {
 		sidebarOpen = false
 		// show search modal
+		searchOpen = true
 	}
 
 	function setEvent() {

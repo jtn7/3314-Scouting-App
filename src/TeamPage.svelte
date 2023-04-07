@@ -44,6 +44,10 @@
 				</div>
 			</div>
 			<div class="info-entry">
+				<div>Gets fed from side</div>
+				<Switch bind:checked={fedSide} icons={false} />
+			</div>
+			<div class="info-entry">
 				<div>Picks up cone from floor</div>
 				<Switch bind:checked={pickupFloorCone} icons={false} />
 			</div>
@@ -122,6 +126,11 @@
 				<Textfield style="width: 100%;" textarea bind:value={primaryStrategy} label="Primary Stategy">
 				</Textfield>
 			</div>
+			<div class="info-entry two-row">
+				<div class="title">Notes</div>
+				<Textfield style="width: 100%;" textarea bind:value={notes}>
+				</Textfield>
+			</div>
 		</div>
 	</div>
 
@@ -159,6 +168,7 @@
 	import Switch from '@smui/switch';
 	import Textfield from '@smui/textfield';
 	import HelperText from '@smui/textfield/helper-text';
+	import { onMount } from 'svelte'
 	import * as fs from './js/firestore'
 	import * as st from './js/stores'
 
@@ -168,9 +178,6 @@
 	export let close
 
 	let eventCode = ''
-	st.currentEvent.subscribe(val => {
-		eventCode = val
-	})
 
 	let teamNumber = teamData.teamNumber
 	let teamName = teamData.teamName
@@ -182,6 +189,7 @@
 	let length = ''
 	let width = ''
 	let height = ''
+	let fedSide = false
 	let pickupFloorCone = false
 	let pickupFloorCube = false
 	let pickupShelfCone = false
@@ -204,8 +212,14 @@
 
 	let playsDefense = false
 	let primaryStrategy = ''
+	let notes = ''
 
-	getRobotData()
+	onMount(async() => {
+		getRobotData()
+		st.currentEvent.subscribe(val => {
+			eventCode = val
+		})
+	})
 	function getRobotData() {
 		fs.getRobotData(teamNumber).then(robotData => {
 			drivetrain = robotData.drivetrain
@@ -214,6 +228,7 @@
 			length = robotData.length
 			width = robotData.width
 			height = robotData.height
+			fedSide = robotData.fedSide
 			pickupFloorCone = robotData.pickupFloorCone
 			pickupFloorCube = robotData.pickupFloorCube
 			pickupShelfCone = robotData.pickupShelfCone
@@ -231,6 +246,7 @@
 			teleopEngage = robotData.teleopEngage
 			playsDefense = robotData.playsDefense
 			primaryStrategy = robotData.primaryStrategy
+			notes = robotData.notes
 		}).catch(err => console.log('failed to get robot data\n', err))
 	}
 
@@ -242,6 +258,7 @@
 			length,
 			width,
 			height,
+			fedSide,
 			pickupFloorCone,
 			pickupFloorCube,
 			pickupShelfCone,
@@ -258,13 +275,13 @@
 			teleopDock,
 			teleopEngage,
 			playsDefense,
-			primaryStrategy
+			primaryStrategy,
+			notes
 		}
 		fs.saveRobotData(teamNumber, robotData)
 	}
 
 	let matches = []
-	getMatches()
 	function getMatches() {
 		fs.getMatches(teamNumber, eventCode).then((result) => {
 			matches = result

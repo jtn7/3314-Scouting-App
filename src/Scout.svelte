@@ -1,4 +1,3 @@
-{#if eventCode !== ''}
 	{#if viewTeleGrid}
 	<!-- <div in:fade="{{delay: 0, duration: 400, x: 100, y: 0, opacity: 0.5, easing: quintOut}}"
 		out:fade="{{delay: 0, duration: 100, x: 100, y: 0, opacity: 0.2}}"> -->
@@ -14,7 +13,7 @@
 	{:else if qrOpen}
 	<div in:scale="{{delay: 0, duration: 300, opacity: 0.5, start: 0.5, easing: quintOut}}"
 		out:fade="{{duration: 100, easing: linear}}">
-		<QRMatch close={closeQR} payload={qrData} />
+		<QRMatch close={closeQR} payload={qrData} match={matchNumber} team={teamNumber} />
 	</div>
 	{:else}
 		<TopAppBar appBarTitle="Scouting" iconPlacement="right" muiIcon="add" callback={addTeam} />
@@ -25,12 +24,6 @@
 			</Tab>
 		</TabBar>
 		<div class="scout-body">
-			<!-- Dialog Open: {open} -->
-			<!-- <div class="teamNumber">{teamNumber}</div>
-			<div class="teamNumber">drive train{robotInfo.driveTrain}</div>
-			<div class="teamNumber">{robotInfo.climbRange}</div>
-			<div class="teamNumber">{viewportWidth}</div>
-			<div class="teamNumber">{viewportHeight}</div> -->
 			<div class="section-title">Team</div>
 			<div class="field-section">
 				<div class="inputField">
@@ -82,6 +75,14 @@
 					</Select>
 				</div>
 				<div class="inputField">
+					<div class="field-name">Pickup 1 Piece</div>
+					<Select bind:value={pickup1Piece}>
+						<Option value=""></Option>
+						<Option value="cone">Cone</Option>
+						<Option value="cube">Cube</Option>
+					</Select>
+				</div>
+				<div class="inputField">
 					<div class="field-name">Pickup 2</div>
 					<Select bind:value={pickup2}>
 						<Option value=""></Option>
@@ -89,6 +90,14 @@
 						<Option value="B">B</Option>
 						<Option value="C">C</Option>
 						<Option value="D">D</Option>
+					</Select>
+				</div>
+				<div class="inputField">
+					<div class="field-name">Pickup 2 Piece</div>
+					<Select bind:value={pickup2Piece}>
+						<Option value=""></Option>
+						<Option value="cone">Cone</Option>
+						<Option value="cube">Cube</Option>
 					</Select>
 				</div>
 				<div class="inputField">
@@ -114,10 +123,6 @@
 					<div class="field-name">Mobility</div>
 					<CheckBoxField bind:checked={aMobility}/>
 				</div>
-				<!-- <div class="inputField">
-					<div class="field-name">Shooting Positions</div>
-					<div on:click={openField} class="material-icons btn">gps_fixed</div>
-				</div> -->
 			</div>
 			<div class="section-title">During the Match</div>
 			<div class="field-section">
@@ -193,12 +198,7 @@
 		{:else}
 		<div class="default-msg">Set team & match</div>
 		{/if}
-
 	{/if}
-	{:else}
-		<TopAppBar appBarTitle="Scouting"/>
-		<div class="default-msg"><div>Event not set</div></div>
-{/if}
 <Dialog bind:open={openSetTeam} aria-labelledby="event-title" aria-describedby="event-content" on:SMUIDialog:closed={closeHandler}>
 	<Title id="event-title">Set Match</Title>
 	<Content id="event-content">
@@ -287,6 +287,8 @@
 	let startedWith = ''
 	let pickup1 = ''
 	let pickup2 = ''
+	let pickup1Piece = ''
+	let pickup2Piece = ''
 	let noMove = false
 
 	let aDocked = false
@@ -348,7 +350,9 @@
 		startingLoc = ''
 		startedWith = ''
 		pickup1 = ''
+		pickup1Piece = ''
 		pickup2 = ''
+		pickup2Piece = ''
 		noMove = false
 		aDocked = false
 		aEngaged = false
@@ -369,6 +373,28 @@
 		tDocked = false
 		tEngaged = false
 		tParked = false
+
+		teleGrid = [
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+		]
+		teleAttemptGrid = [
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+		]
+
+		autoGrid = [
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+		]
+		autoAttemptGrid = [
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ],
+			[ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE ]
+		]
 	}
 
 	let qrOpen = false
@@ -380,43 +406,55 @@
 	function openQRMatch() {
 		qrOpen = true
 		const matchData = {
-			teamNumber: teamNumber,
-			matchNumber: matchNumber,
-			data: {
-				allianceColor: alliance,
-				teamPartner1: partner1,
-				teamPartner2: partner2,
+			a: teamNumber,
+			b: matchNumber,
+			c: {
+				d: alliance,
+				e: partner1,
+				f: partner2,
 
 				// Auton Scoring
-				autoStartingLoc: startingLoc,
-				autoStartedWith: startedWith,
-				autoPickup1: pickup1,
-				autoPickup2: pickup2,
-				autoNoMove: noMove,
-				autoGrid: autoGrid,
-				autoDocked: aDocked,
-				autoEngaged: aEngaged,
-				autoMobility: aMobility,
+				g: startingLoc,
+				h: startedWith,
+				i: pickup1,
+				j: pickup1Piece,
+				k: pickup2,
+				l: pickup1Piece,
+				m: noMove ? 1 : 0,
+				n: autoGrid[0],
+				o: autoGrid[1],
+				p: autoGrid[2],
+				a1: autoAttemptGrid[0],
+				a2: autoAttemptGrid[1],
+				a3: autoAttemptGrid[2],
+				q: aDocked ? 1 : 0,
+				r: aEngaged ? 1 : 0,
+				s: aMobility ? 1 : 0,
 
 				// Teleop Scoring
-				teleopPenalties: tPenalties,
-				teleopLostComms: tLostComms,
-				teleopDisabled: tDisabled,
-				teleopLostBumper: tLostBumper,
-				teleopNoShow: tNoShow,
-				teleopPickedUpFloor: tPickedUpFloor,
-				teleopPickedUpShelf: tPickedUpShelf,
-				teleopStagedPieces: tStagedPieces,
-				teleopScoredStaged: tScoredStaged,
-				teleopPlayedDefense: tPlayedDefense,
-				teleopExcellentDriving: tExcellentDriving,
-				teleopGrid: teleGrid,
-				teleopDocked: tDocked,
-				teleopEngaged: tEngaged,
-				teleopParked: tParked,
+				t: tPenalties ? 1 : 0,
+				u: tLostComms ? 1 : 0,
+				v: tDisabled ? 1 : 0,
+				w: tLostBumper ? 1 : 0,
+				x: tNoShow ? 1 : 0,
+				y: tPickedUpFloor ? 1 : 0,
+				z: tPickedUpShelf ? 1 : 0,
+				aa: tStagedPieces ? 1 : 0,
+				ab: tScoredStaged ? 1 : 0,
+				ac: tPlayedDefense ? 1 : 0,
+				ad: tExcellentDriving ? 1 : 0,
+				ae: teleGrid[0],
+				af: teleGrid[1],
+				ag: teleGrid[2],
+				t1: teleAttemptGrid[0],
+				t2: teleAttemptGrid[1],
+				t3: teleAttemptGrid[2],
+				ah: tDocked ? 1 : 0,
+				aj: tEngaged ? 1 : 0,
+				ak: tParked ? 1 : 0,
 			}
 		}
-		qrData = matchData
+		qrData = btoa(JSON.stringify(matchData))
 		qrOpen = true
 	}
 

@@ -5,8 +5,10 @@
 </div>
 <div class="component-body">
 	<div class="qr-block">
-		<canvas bind:this={canvasElem} width="100%"></canvas>
-		<div>Match 1</div>
+		<canvas bind:this={canvasElem}></canvas>
+		{#if match !== -1}
+		<div>{team} - #{match}</div>
+		{/if}
 	</div>
 </div>
 <script>
@@ -15,10 +17,12 @@
 	import { onMount } from 'svelte'
 	export let close
 	export let payload
+	export let team = 0
+	export let match = -1
 
 	let canvasElem
 	onMount(async() => {
-		let qrWidth = window.innerWidth * 0.5;
+		let qrWidth = window.innerWidth * 0.7;
 		QRCode.toCanvas(canvasElem, JSON.stringify(payload), {width: qrWidth}, function (error) {
 			if (error)
 				console.error(error)

@@ -239,6 +239,11 @@
 				lvl3Piece.classList.replace('cylinder', 'triangle')
 			} else if (gridData[LVL3][position] == CUBE) {
 				lvl3Piece.classList.replace('none', 'square')
+			} else if (gridData[LVL3][position] == CONE_OTHER) {
+				lvl3Piece.classList.replace('none', 'triangle-other')
+				lvl3Piece.classList.replace('cylinder', 'triangle-other')
+			} else if (gridData[LVL3][position] == CUBE_OTHER) {
+				lvl3Piece.classList.replace('none', 'square-other')
 			}
 			// Level 2
 			const lvl2Piece = lvl2Slots[position].firstChild;
@@ -247,6 +252,11 @@
 				lvl2Piece.classList.replace('cylinder', 'triangle')
 			} else if (gridData[LVL2][position] == CUBE) {
 				lvl2Piece.classList.replace('none', 'square')
+			} else if (gridData[LVL2][position] == CONE_OTHER) {
+				lvl2Piece.classList.replace('none', 'triangle-other')
+				lvl2Piece.classList.replace('cylinder', 'triangle-other')
+			} else if (gridData[LVL2][position] == CUBE_OTHER) {
+				lvl2Piece.classList.replace('none', 'square-other')
 			}
 			// Level 1
 			const lvl1Piece = lvl1Slots[position].firstChild;
@@ -254,6 +264,10 @@
 				lvl1Piece.classList.replace('none', 'triangle')
 			} else if (gridData[LVL1][position] == CUBE) {
 				lvl1Piece.classList.replace('none', 'square')
+			} else if (gridData[LVL1][position] == CONE_OTHER) {
+				lvl1Piece.classList.replace('none', 'triangle-other')
+			} else if (gridData[LVL1][position] == CUBE_OTHER) {
+				lvl1Piece.classList.replace('none', 'square-other')
 			}
 		}
 	}
@@ -436,8 +450,8 @@
 	}
 
 	.grid > div {
-		height: 45px;
-		width: 45px;
+		height: 35px;
+		width: 35px;
 		padding: 0.5rem;
 
 		display: flex;
@@ -474,8 +488,8 @@
 	}
 
 	.cylinder {
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 		background: black;
 		border-radius: 50%;
 	}
