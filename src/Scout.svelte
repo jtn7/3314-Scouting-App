@@ -546,7 +546,7 @@
 			eventCode: 'MRCMP',
 			matchData: JSON.stringify(matchData)
 		}
-		fetch("http://scout.pi:8080/match",{
+		fetch("https://scout.pi/match",{
 			method: 'POST',
 			mode: 'no-cors',
 			cache: 'no-cache',
@@ -555,8 +555,8 @@
 			},
 			body: JSON.stringify(payload)
 		}).then(resp => {
-			console.log(resp)
-		})
+			console.log('fetch to pi completed')
+		}).catch(err => console.log(err))
 	}
 </script>
 
