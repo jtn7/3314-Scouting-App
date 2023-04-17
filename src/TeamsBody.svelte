@@ -2,7 +2,7 @@
 <Drawer variant="modal" bind:open={sidebarOpen}>
 	<Header>
 		<Title>3314 Scouting</Title>
-		<Subtitle>version 0.4</Subtitle>
+		<Subtitle>version 0.5</Subtitle>
 	</Header>
 	<Content>
 		<List>
@@ -22,20 +22,20 @@
 				<Text>Add Team</Text>
 			</Item>
 			<!-- Set Event -->
-			<Item href="javascript:void(0)" on:click="{()=> openEventModal()}">
+			<!-- <Item href="javascript:void(0)" on:click="{()=> openEventModal()}">
 				<Graphic class="material-icons" aria-hidden="true">insert_invitation</Graphic>
 				<Text>Set Event</Text>
-			</Item>
+			</Item> -->
 			<!-- Sync -->
 			<!-- <Item href="javascript:void(0)" on:click={()=> sync()}>
 				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
 				<Text>Sync</Text>
 			</Item> -->
 			<!-- Sync -->
-			<Item href="javascript:void(0)" on:click={()=> openSigninModal()}>
+			<!-- <Item href="javascript:void(0)" on:click={()=> openSigninModal()}>
 				<Graphic class="material-icons" aria-hidden="true">autorenew</Graphic>
 				<Text>Sign in</Text>
-			</Item>
+			</Item> -->
 
 			<!-- Recently visited teams -->
 			<Separator />
@@ -73,7 +73,7 @@
 		</div>
 	</div>
 	{/if} -->
-	<div class="team-section">
+	<!-- <div class="team-section">
 		<div class="title">Event</div>
 		<div class="teams">
 			{#each eventTeams as t}
@@ -88,7 +88,7 @@
 			</div>
 			{/each}
 		</div>
-	</div>
+	</div> -->
 	<div class="team-section">
 		<div class="title">All</div>
 		<div class="teams">
@@ -153,6 +153,14 @@
 <TeamPage close={closeTeam} teamData={selectedTeam}/>
 {/if}
 
+<!-- Toast alert for saving -->
+<Snackbar bind:this={toast}>
+	<SLabel>{toastMessage}</SLabel>
+	<SActions>
+		<IconButton class="material-icons" title="Dismiss">close</IconButton>
+	</SActions>
+</Snackbar>
+
 <script>
 	import TopAppBar from './TopAppBar.svelte'
 	import TeamPage from './TeamPage.svelte'
@@ -162,6 +170,7 @@
 	import Radio from '@smui/radio';
 	import Textfield from '@smui/textfield'
 	import Select, { Option } from '@smui/select';
+	import IconButton from '@smui/icon-button'
 	import * as st from './js/stores'
 	import { onMount } from 'svelte'
 	let teams = []
@@ -183,17 +192,37 @@
 		})
 
 		// Signin modal
-		password = document.cookie
-		fs.initFirebase(password).then(() => initText = '').catch(
-			() => {
-				initText = 'Sign in'
-				password = ''
-				document.cookie = ''
-			}
-		)
+		// password = document.cookie
+		// fs.initFirebase(password).then(() => initText = '').catch(
+		// 	() => {
+		// 		initText = 'Sign in'
+		// 		password = ''
+		// 		document.cookie = ''
+		// 	}
+		// )
 
-		setEventTeams()
+		// setEventTeams()
+		loadTeams()
 	})
+
+	import Snackbar, { Actions as SActions, Label as SLabel } from '@smui/snackbar';
+	let toast
+	let toastMessage = 'message not set'
+
+	function loadTeams() {
+		fetch("https://scout.pi/teams",{
+			method: 'GET',
+			cache: 'no-cache',
+		}).then(resp => {
+			console.log('fetch to pi successful\nresponse code:', resp.status)
+		}).catch(err => {
+			console.log('failed to get teams', err)
+			toastMessage = 'Failed to get teams'
+			initText = 'Connect to Pi'
+			toast.open()
+			
+		})
+	}
 
 	// db.getTeams().then(results => {
 	// 	teams = results

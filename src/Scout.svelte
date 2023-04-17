@@ -221,6 +221,14 @@
 	</Actions>
 </Dialog>
 
+<!-- Toast alert for saving -->
+<Snackbar bind:this={saveToast}>
+	<SLabel>{saveMessage}</SLabel>
+	<SActions>
+		<IconButton class="material-icons" title="Dismiss">close</IconButton>
+	</SActions>
+</Snackbar>
+
 <script>
 	import { scale, fade, blur } from 'svelte/transition';
 	import { quintOut, linear } from 'svelte/easing';
@@ -242,6 +250,11 @@
 	import * as st from './js/stores'
 	import * as fs from './js/firestore'
 	import { onMount } from 'svelte'
+
+	import Snackbar, { Actions as SActions, Label as SLabel } from '@smui/snackbar';
+	let saveToast
+	let saveMessage = 'message not set'
+
 
 	onMount(async() => {
 		st.currentEvent.subscribe(val => {
@@ -543,7 +556,7 @@
 		const payload = {
 			teamNumber: teamNumber,
 			matchNumber: matchNumber,
-			eventCode: 'MRCMP',
+			eventCode: 'WORLDS',
 			matchData: JSON.stringify(matchData)
 		}
 		fetch("https://scout.pi/match",{
@@ -556,7 +569,13 @@
 			body: JSON.stringify(payload)
 		}).then(resp => {
 			console.log('fetch to pi completed')
-		}).catch(err => console.log(err))
+			saveMessage = 'Saved'
+			saveToast.open()
+		}).catch(err => {
+			console.log('POST request failed:', err)
+			saveMessage = 'failed to save'
+			saveToast.open()
+		})
 	}
 </script>
 
